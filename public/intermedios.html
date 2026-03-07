@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos Intermedios | </title>
+
+    <meta name="description" content="Gestión y listado de productos intermedios del sistema de costeo.">
+    <link rel="stylesheet" href="css/intermedios.css">
+</head>
+
+<body>
+
+<header class="header">
+    <button class="menu-btn" id="btnMenu" aria-label="Abrir menú">
+        ☰
+    </button>
+    <h1>Sistema de Costeo</h1>
+</header>
+
+<div id="overlay"></div>
+
+<nav class="sidebar" id="sidebar">
+    <ul>
+        <li><a href="insumos.html">Insumos</a></li>
+        <li><a href="packing.html">Empaques</a></li>
+        <li><a href="intermedios.html">Productos Intermedios</a></li>
+        <li><a href="recetas.html">Productos Terminados</a></li>
+        <li><a href="intermedio_costeo.html">Costear Producto Intermedio</a></li>
+        <li><a href="dashboard.html">Costear Producto Terminado</a></li>
+        <li><a href="rentabilidad.html">Rentabilidad</a></li>
+        <li><a href="clientes.html">Clientes</a></li>
+        <li><a href="#" id="logoutBtn">Cerrar Sesión</a></li>
+    </ul>
+</nav>
+
+<!-- ================= CONTENIDO ================= -->
+<main class="content">
+    <section class="container">
+
+        <div class="header-section">
+            <h2>Productos Intermedios</h2>
+
+            <a href="intermedio_costeo.html" class="btn-principal">
+                + Nuevo Producto Intermedio
+            </a>
+        </div>
+
+        <div id="mensaje" class="mensaje oculto"></div>
+
+        <div id="listaIntermedios" class="lista-intermedios">
+            <!-- Se llena dinámicamente desde JS -->
+        </div>
+
+    </section>
+</main>
+
+<script src="js/menu.js"></script>
+<script src="js/intermedios.js"></script>
+</body>
+</html>

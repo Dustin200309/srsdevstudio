@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle Producto Intermedio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/detalle-intermedio.css">
+</head>
+
+<body>
+
+<nav class="sidebar" id="sidebar">
+    <ul>
+        <li><a href="insumos.html">Insumos</a></li>
+        <li><a href="packing.html">Empaques</a></li>
+        <li><a href="intermedios.html">Productos Intermedios</a></li>
+        <li><a href="recetas.html">Productos Terminados</a></li>
+        <li><a href="intermedio_costeo.html">Costear Producto Intermedio</a></li>
+        <li><a href="dashboard.html">Costear Producto Terminado</a></li>
+        <li><a href="rentabilidad.html">Rentabilidad</a></li>
+        <li><a href="clientes.html">Clientes</a></li>
+        <li><a href="#" id="logoutBtn">Cerrar Sesión</a></li>
+    </ul>
+</nav>
+
+    <!-- CONTENIDO -->
+    <main class="content">
+        <section class="card-detalle">
+
+            <!-- Loader -->
+            <div id="loader" class="loader"></div>
+
+            <!-- Contenido dinámico -->
+            <div id="detalleContainer" class="detalle-body hidden">
+                <!-- Se llena desde JS -->
+            </div>
+
+            <!-- Botón volver -->
+            <div class="detalle-actions">
+                <button id="btnVolver" class="btn-secundario">
+                    ← Volver
+                </button>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- JS -->
+    <script src="js/menu.js"></script>
+    <script src="js/detalle-intermedio.js"></script>
+
+</body>
+</html>

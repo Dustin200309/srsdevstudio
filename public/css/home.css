@@ -1,0 +1,525 @@
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+:root{
+  --marron:#8b5e3c;
+  --marron-oscuro:#865c3f;
+  --beige:#f1e3d3;
+  --beige-claro:#faf6f1;
+  --blanco:#ffffff;
+  --gris:#6f5f55;
+  --acento:#d4a373;
+  --verde:#4f772d;
+  --rojo:#b23a48;
+  --radius:18px;
+  --shadow:0 10px 30px rgba(0,0,0,0.06);
+  --border:#dcdcdc;
+  --text:#333333;
+}
+
+/* =====================================================
+   RESET
+===================================================== */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'Inter',sans-serif;
+background:var(--beige-claro);
+color:var(--text);
+min-height:100vh;
+display:flex;
+}
+
+/* =====================================================
+   SCROLL
+===================================================== */
+
+::-webkit-scrollbar{
+width:8px;
+}
+
+::-webkit-scrollbar-thumb{
+background:var(--acento);
+border-radius:10px;
+}
+
+::-webkit-scrollbar-track{
+background:transparent;
+}
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.sidebar{
+width:260px;
+background:var(--blanco);
+border-right:1px solid var(--border);
+padding:25px 20px;
+position:fixed;
+height:100%;
+overflow-y:auto;
+transition:0.3s;
+z-index:1000;
+}
+
+.sidebar-header{
+font-size:22px;
+font-weight:600;
+margin-bottom:30px;
+color:var(--marron);
+}
+
+.sidebar ul{
+list-style:none;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.sidebar li a{
+display:flex;
+align-items:center;
+gap:12px;
+padding:12px 14px;
+border-radius:12px;
+text-decoration:none;
+color:var(--gris);
+font-weight:500;
+transition:0.25s;
+}
+
+.sidebar li a:hover{
+background:var(--beige);
+color:var(--marron);
+}
+
+.sidebar li a i{
+font-size:16px;
+width:20px;
+}
+
+.logout{
+margin-top:25px;
+}
+
+.logout button{
+width:100%;
+border:none;
+padding:12px;
+background:var(--rojo);
+color:white;
+border-radius:12px;
+cursor:pointer;
+font-weight:500;
+transition:.25s;
+}
+
+.logout button:hover{
+background:#962c39;
+}
+
+/* =====================================================
+   OVERLAY
+===================================================== */
+
+.overlay{
+position:fixed;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.35);
+opacity:0;
+pointer-events:none;
+transition:.3s;
+z-index:900;
+}
+
+.overlay.active{
+opacity:1;
+pointer-events:auto;
+}
+
+/* =====================================================
+   MAIN CONTAINER
+===================================================== */
+
+.main-container{
+margin-left:260px;
+flex:1;
+display:flex;
+flex-direction:column;
+min-height:100vh;
+}
+
+/* =====================================================
+   NAVBAR
+===================================================== */
+
+.navbar{
+height:70px;
+background:var(--blanco);
+border-bottom:1px solid var(--border);
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 30px;
+}
+
+.nav-left{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.nav-left h1{
+font-size:20px;
+font-weight:600;
+color:var(--marron);
+}
+
+.menu-btn{
+border:none;
+background:none;
+font-size:20px;
+cursor:pointer;
+color:var(--marron);
+display:none;
+}
+
+.nav-right{
+display:flex;
+align-items:center;
+gap:20px;
+}
+
+.usuario{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.avatar{
+width:40px;
+height:40px;
+border-radius:50%;
+object-fit:cover;
+border:2px solid var(--beige);
+}
+
+.usuario-info{
+display:flex;
+flex-direction:column;
+font-size:14px;
+}
+
+.usuario-info small{
+color:var(--gris);
+}
+
+/* =====================================================
+   DASHBOARD GRID
+===================================================== */
+
+.dashboard{
+padding:30px;
+display:grid;
+grid-template-columns:1fr 1fr 1fr;
+gap:25px;
+flex:1;
+}
+
+/* =====================================================
+   CARDS
+===================================================== */
+
+.card{
+background:var(--blanco);
+border-radius:var(--radius);
+box-shadow:var(--shadow);
+display:flex;
+flex-direction:column;
+overflow:hidden;
+transition:.25s;
+}
+
+.card:hover{
+transform:translateY(-3px);
+}
+
+.card-header{
+padding:18px 20px;
+border-bottom:1px solid var(--border);
+font-weight:600;
+color:var(--marron);
+}
+
+.card-content{
+padding:20px;
+font-size:14px;
+color:var(--gris);
+}
+
+.placeholder{
+opacity:.7;
+}
+
+/* =====================================================
+   CHAT CARD
+===================================================== */
+
+.chat-card{
+display:flex;
+flex-direction:column;
+height:420px;
+}
+
+/* =====================================================
+   CHAT BOX
+===================================================== */
+
+.chat-box{
+flex:1;
+padding:20px;
+overflow-y:auto;
+display:flex;
+flex-direction:column;
+gap:12px;
+background:var(--beige-claro);
+}
+
+/* MENSAJES */
+
+.msg{
+max-width:75%;
+padding:10px 14px;
+border-radius:14px;
+font-size:14px;
+line-height:1.4;
+}
+
+.msg.user{
+align-self:flex-end;
+background:var(--acento);
+color:white;
+border-bottom-right-radius:4px;
+}
+
+.msg.support{
+align-self:flex-start;
+background:white;
+border:1px solid var(--border);
+border-bottom-left-radius:4px;
+}
+
+/* =====================================================
+   CHAT INPUT
+===================================================== */
+
+.chat-input{
+display:flex;
+gap:10px;
+padding:15px;
+border-top:1px solid var(--border);
+background:white;
+}
+
+.chat-input input{
+flex:1;
+padding:10px 12px;
+border-radius:12px;
+border:1px solid var(--border);
+font-size:14px;
+outline:none;
+transition:.2s;
+}
+
+.chat-input input:focus{
+border-color:var(--acento);
+}
+
+.chat-input button{
+border:none;
+background:var(--marron);
+color:white;
+padding:10px 14px;
+border-radius:12px;
+cursor:pointer;
+transition:.25s;
+}
+
+.chat-input button:hover{
+background:var(--marron-oscuro);
+}
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footer{
+text-align:center;
+padding:18px;
+font-size:13px;
+color:var(--gris);
+background:var(--blanco);
+border-top:1px solid var(--border);
+}
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width:1000px){
+
+.dashboard{
+grid-template-columns:1fr 1fr;
+}
+
+.chat-card{
+grid-column:span 2;
+}
+
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width:760px){
+
+.sidebar{
+transform:translateX(-100%);
+}
+
+.sidebar.active{
+transform:translateX(0);
+}
+
+.menu-btn{
+display:block;
+}
+
+.main-container{
+margin-left:0;
+}
+
+.dashboard{
+grid-template-columns:1fr;
+padding:20px;
+}
+
+.chat-card{
+height:420px;
+}
+
+.navbar{
+padding:0 20px;
+}
+
+}
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width:480px){
+
+.nav-left h1{
+font-size:16px;
+}
+
+.avatar{
+width:34px;
+height:34px;
+}
+
+.chat-input input{
+font-size:13px;
+}
+
+}
+
+/* =====================================================
+   ANIMACIONES
+===================================================== */
+
+@keyframes fadeIn{
+from{
+opacity:0;
+transform:translateY(10px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.card{
+animation:fadeIn .5s ease;
+}
+
+/* =====================================================
+   HOVER LINKS
+===================================================== */
+
+.sidebar a{
+position:relative;
+}
+
+.sidebar a::after{
+content:"";
+position:absolute;
+bottom:0;
+left:0;
+height:2px;
+width:0;
+background:var(--acento);
+transition:.25s;
+}
+
+.sidebar a:hover::after{
+width:100%;
+}
+
+/* =====================================================
+   MENSAJES CHAT EFECTO
+===================================================== */
+
+.msg{
+animation:fadeIn .3s ease;
+}
+
+/* =====================================================
+   INPUT PLACEHOLDER
+===================================================== */
+
+input::placeholder{
+color:#aaa;
+}
+
+/* =====================================================
+   BOTONES
+===================================================== */
+
+button{
+font-family:inherit;
+}
+
+/* =====================================================
+   UTILIDADES
+===================================================== */
+
+.hidden{
+display:none;
+}
+
+.center{
+display:flex;
+align-items:center;
+justify-content:center;
+}

@@ -1,0 +1,326 @@
+:root{
+--marron:#7a4e2d;
+--marron-oscuro:#4a2c1a;
+--beige:#f1e3d3;
+--beige-claro:#faf6f1;
+--blanco:#ffffff;
+--gris:#6f5f55;
+--acento:#d4a373;
+--verde:#4f772d;
+--rojo:#b23a48;
+
+--text:#2f1b12;
+--border:#e6ddd6;
+
+--radius:14px;
+--shadow:0 10px 25px rgba(0,0,0,0.08);
+}
+
+/* ================= RESET ================= */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+}
+
+body{
+background:var(--beige-claro);
+color:var(--text);
+min-height:100vh;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+position:sticky;
+top:0;
+
+display:flex;
+align-items:center;
+gap:15px;
+
+padding:16px 22px;
+
+background:var(--blanco);
+
+border-bottom:1px solid var(--border);
+
+z-index:10;
+}
+
+.header h1{
+font-size:20px;
+font-weight:600;
+}
+
+.menu-btn{
+font-size:22px;
+border:none;
+background:none;
+cursor:pointer;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+position:fixed;
+top:0;
+left:-260px;
+
+width:240px;
+height:100%;
+
+background:var(--blanco);
+
+border-right:1px solid var(--border);
+
+padding-top:70px;
+
+transition:.3s;
+
+z-index:20;
+}
+
+.sidebar.active{
+left:0;
+}
+
+.sidebar ul{
+list-style:none;
+}
+
+.sidebar li{
+border-bottom:1px solid var(--border);
+}
+
+.sidebar a{
+display:block;
+padding:14px 20px;
+text-decoration:none;
+color:var(--text);
+font-size:14px;
+transition:.2s;
+}
+
+.sidebar a:hover{
+background:#f6f2ee;
+}
+
+/* ================= OVERLAY ================= */
+
+#overlay{
+position:fixed;
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,0.4);
+
+opacity:0;
+pointer-events:none;
+
+transition:.3s;
+
+z-index:15; /* antes 999 */
+}
+
+#overlay.active{
+opacity:1;
+pointer-events:auto;
+}
+
+/* ================= BOTON PRINCIPAL ================= */
+
+.btn-principal{
+display:inline-block;
+
+margin-top:8px;
+margin-bottom:18px;
+
+padding:10px 16px;
+
+background:var(--marron);
+color:var(--blanco);
+
+text-decoration:none;
+
+font-size:14px;
+font-weight:600;
+
+border-radius:10px;
+
+transition:.25s;
+
+box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+
+.btn-principal:hover{
+background:var(--marron-oscuro);
+transform:translateY(-1px);
+box-shadow:0 6px 14px rgba(0,0,0,0.12);
+}
+
+/* ================= BOTONES PRODUCTO ================= */
+
+.acciones{
+display:flex;
+gap:10px;
+margin-top:12px;
+}
+
+.btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+gap:6px;
+
+height:38px;
+padding:0 16px;
+
+font-size:14px;
+font-weight:600;
+
+border:none;
+outline:none;
+
+border-radius:10px;
+
+cursor:pointer;
+
+transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+
+color:#fff;
+}
+
+/* VER */
+
+.btn-ver{
+background:var(--acento);
+}
+
+.btn-ver:hover{
+background:var(--marron-oscuro);
+transform:translateY(-1px);
+box-shadow:0 4px 10px rgba(0,0,0,.12);
+}
+
+/* ELIMINAR */
+
+.btn-eliminar{
+background:var(--rojo);
+}
+
+.btn-eliminar:hover{
+background:#9e2a2f;
+transform:translateY(-1px);
+box-shadow:0 4px 10px rgba(0,0,0,.12);
+}
+
+/* focus accesible */
+
+.btn:focus-visible{
+box-shadow:0 0 0 3px rgba(122,78,45,.25);
+}
+
+/* ================= CARD ================= */
+
+.card{
+background:var(--blanco);
+padding:22px;
+border-radius:var(--radius);
+box-shadow:var(--shadow);
+margin-bottom:15px;
+}
+
+.card h2{
+margin-bottom:18px;
+color:var(--marron-oscuro);
+letter-spacing:.2px;
+}
+
+.card h3{
+font-size:16px;
+font-weight:600;
+color:var(--marron-oscuro);
+margin-bottom:6px;
+}
+
+.card p{
+color:var(--gris);
+font-size:14px;
+margin-bottom:4px;
+}
+
+/* ================= LAYOUT ================= */
+
+main{
+max-width:1200px;
+margin:auto;
+padding:20px;
+}
+
+.grid-2{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+margin-bottom:25px;
+}
+
+/* ================= FORM ================= */
+
+.form-group{
+display:flex;
+flex-direction:column;
+margin-bottom:15px;
+}
+
+.form-group label{
+font-size:14px;
+margin-bottom:6px;
+color:var(--gris);
+}
+
+input,
+select{
+padding:10px;
+border-radius:8px;
+border:1px solid #ddd;
+font-size:14px;
+}
+
+input:focus,
+select:focus{
+outline:none;
+border-color:var(--acento);
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:900px){
+
+.grid-2{
+grid-template-columns:1fr;
+}
+
+}
+
+@media(max-width:600px){
+
+.header h1{
+font-size:18px;
+}
+
+.card{
+padding:18px;
+}
+
+input,
+select{
+font-size:13px;
+}
+
+}

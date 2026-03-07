@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Costeo Producto Intermedio | Sistema de Costeo</title>
+
+    <meta name="description" content="Cálculo y registro de costos para productos intermedios.">
+
+    <link rel="stylesheet" href="css/intermedio_costeo.css">
+</head>
+
+<body>
+
+<header class="header">
+    <button class="menu-btn" id="btnMenu" aria-label="Abrir menú">☰</button>
+    <h1>Costear Intermedio</h1>
+</header>
+
+<div class="overlay" id="overlay"></div>
+
+<nav class="sidebar" id="sidebar">
+    <ul>
+        <li><a href="insumos.html">Insumos</a></li>
+        <li><a href="packing.html">Empaques</a></li>
+        <li><a href="intermedios.html">Productos Intermedios</a></li>
+        <li><a href="recetas.html">Productos Terminados</a></li>
+        <li><a href="intermedio_costeo.html">Costear Producto Intermedio</a></li>
+        <li><a href="dashboard.html">Costear Producto Terminado</a></li>
+        <li><a href="rentabilidad.html">Rentabilidad</a></li>
+        <li><a href="clientes.html">Clientes</a></li>
+        <li><a href="#" id="logoutBtn">Cerrar Sesión</a></li>
+    </ul>
+</nav>
+
+<main class="content">
+<section class="container">
+
+    <div class="header-section">
+        <h2>Costeo Producto Intermedio</h2>
+    </div>
+
+    <!-- ================= DATOS GENERALES ================= -->
+    <div class="card">
+        <h3>Datos Generales</h3>
+
+        <div class="form-grid">
+            <div>
+                <label>Nombre del Intermedio</label>
+                <input type="text" id="nombre" placeholder="Ej: Relleno de Chocolate">
+            </div>
+
+            <div>
+                <label>Cantidad Producida</label>
+                <input type="number" id="cantidadProducida" value="1" min="1">
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= AGREGAR INSUMOS ================= -->
+    <div class="card">
+        <h3>Agregar Insumo</h3>
+
+        <div class="insumo-grid">
+            <select id="selectInsumo">
+                <option value="">Seleccione un insumo</option>
+            </select>
+
+            <select id="unidadSelect">
+                <option value="g">Gramo (g)</option>
+                <option value="kg">Kilogramo (kg)</option>
+                <option value="ml">Mililitro (ml)</option>
+                <option value="l">Litro (l)</option>
+            </select>
+
+            <input type="number" id="cantidadInsumo" placeholder="Cantidad usada">
+
+            <button type="button" id="btnAgregar" class="btn-principal">
+                Agregar
+            </button>
+        </div>
+
+        <div class="tabla-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Insumo</th>
+                        <th>Cantidad</th>
+                        <th>Costo</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaInsumos"></tbody>
+            </table>
+        </div>
+
+        <div class="total-materiales">
+            Total Materiales:
+            <strong id="totalMateriales">S/ 0.00</strong>
+        </div>
+    </div>
+
+   <div class="card-mano-obra">
+  <h3>Mano de Obra (%)</h3>
+  <input type="number" id="manoObra" value="0">
+</div>
+<div class="resumen-costos">
+  <p>
+    Costo Mano de Obra:
+    <strong id="costoManoObra">S/ 0.00</strong>
+  </p>
+</div>
+
+<div class="total-general">
+
+  <h2>Total General</h2>
+
+  <div class="precio" id="totalGeneral">
+    S/ 0.00
+  </div>
+
+  <div class="unitario">
+    Costo Unitario:
+    <span id="costoUnitario">S/ 0.00</span>
+  </div>
+
+  <button id="btnGuardar" class="btn-guardar">
+    Guardar Intermedio
+  </button>
+
+</div>
+</section>
+</main>
+
+<script src="js/menu.js"></script>
+<script src="js/intermedio_costeo.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Insumos</title>
+    <link rel="stylesheet" href="css/insumos.css">
+</head>
+<body>
+<div id="customModal" class="modal">
+    <h3 id="modalTitle"></h3>
+    <p id="modalMessage"></p>
+    <div id="modalActions"></div>
+</div>
+<header class="header">
+    <button class="menu-btn" id="btnMenu">☰</button>
+    <h1>Gestión de Insumos</h1>
+</header>
+
+<div class="overlay" id="overlay"></div>
+
+<nav class="sidebar" id="sidebar">
+    <ul>
+        <li><a href="insumos.html">Insumos</a></li>
+        <li><a href="packing.html">Empaques</a></li>
+        <li><a href="intermedios.html">Productos Intermedios</a></li>
+        <li><a href="recetas.html">Productos Terminados</a></li>
+        <li><a href="intermedio_costeo.html">Costear Producto Intermedio</a></li>
+        <li><a href="dashboard.html">Costear Producto Terminado</a></li>
+        <li><a href="rentabilidad.html">Rentabilidad</a></li>
+        <li><a href="clientes.html">Clientes</a></li>
+        <li><a href="#" id="logoutBtn">Cerrar Sesión</a></li>
+    </ul>
+</nav>
+
+<main class="content">
+
+<section class="card">
+    <h2>Agregar Insumo</h2>
+
+    <label>Nombre</label>
+    <input type="text" id="nombreInsumo" placeholder="Ej: Harina">
+
+    <label>Unidad de Medida</label>
+    <select id="unidadInsumo">
+        <option value="kg">Kilogramo (kg)</option>
+        <option value="g">Gramo (g)</option>
+        <option value="l">Litro (l)</option>
+        <option value="ml">Mililitro (ml)</option>
+        <option value="unidad">Unidad</option>
+    </select>
+
+    <label>Precio Base</label>
+    <input type="number" id="precioInsumo" step="0.01" placeholder="Ej: 3.50">
+
+    <div class="btn-group">
+        <button class="btn-primary" id="btnGuardarInsumo">Guardar</button>
+        <button class="btn-secondary" id="btnLimpiar">Descartar</button>
+    </div>
+</section>
+
+<section class="card">
+    <input 
+        type="text" 
+        id="buscarInsumo" 
+        placeholder="🔍 Buscar insumo..."
+        class="search-input"
+    >
+</section>
+
+<section class="card">
+    <div class="section-header">
+        <h2>Lista de Insumos</h2>
+        <span id="contadorInsumos" class="badge">0</span>
+    </div>
+    <div id="listaInsumos" class="lista-insumos"></div>
+</section>
+
+</main>
+
+<div id="toast" class="toast"></div>
+
+<script src="js/insumos.js"></script>
+<script src="js/menu.js"></script>
+
+</body>
+</html>

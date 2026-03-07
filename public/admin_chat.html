@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat Admin</title>
+
+<link rel="stylesheet" href="css/admin_chat.css">
+</head>
+
+<body>
+
+<div class="chat-container">
+
+    <!-- LISTA USUARIOS -->
+    <div class="usuarios-panel">
+
+        <h2>Usuarios</h2>
+
+        <div id="usuariosList"></div>
+
+    </div>
+
+    <!-- CHAT -->
+    <div class="chat-panel">
+
+        <div class="chat-header">
+            <h3 id="usuarioActivo">Selecciona un usuario</h3>
+        </div>
+
+        <div class="chat-mensajes" id="chatMensajes"></div>
+
+        <form id="formMensaje" class="chat-form">
+            <input type="text" id="mensajeInput" placeholder="Escribe mensaje..." required>
+            <button type="submit">Enviar</button>
+        </form>
+
+    </div>
+
+</div>
+
+<script src="js/admin_chat.js"></script>
+
+</body>
+</html>

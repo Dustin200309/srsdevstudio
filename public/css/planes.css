@@ -1,0 +1,342 @@
+:root {
+    --marron: #7a4e2d;
+    --marron-oscuro: #4a2c1a;
+    --marron-profundo: #2f1b12;
+
+    --bg: #fcf8f4;
+    --text: #2f1b12;
+    --card-bg: #ffffff;
+
+    --acento: #d4a373;
+    --highlight: #fbbf24;
+    --highlight-dark: #f59e0b;
+
+    --text-soft: #cbd5e1;
+    --muted: #94a3b8;
+
+    --radius: 16px;
+    --shadow-soft: 0 8px 25px rgb(13, 13, 13);
+    --shadow-medium: 0 12px 35px rgba(0, 0, 0, 0.12);
+
+    --transition: all .3s ease;
+}
+
+/* DARK MODE */
+body.dark-mode {
+    --bg: #090909;
+    --text: #f5f5f5;
+    --card-bg: #1e1e1e;
+    --highlight: #fbbf24;
+}
+
+/* ===========================
+   RESET
+=========================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    transition: var(--transition);
+}
+
+/* ===========================
+   BOTONES
+=========================== */
+.btn-primary{
+  background:var(--marron);
+  color:white;
+  padding:14px 28px;
+  border-radius:14px;
+  border:none;
+  cursor:pointer;
+  transition:.3s;
+}
+.btn-primary:hover{ background:var(--marron-oscuro); }
+
+.btn-secondary{
+  border:2px solid var(--acento);
+  color:var(--acento);
+  padding:14px 28px;
+  border-radius:14px;
+  text-decoration:none;
+  transition:.3s;
+}
+.btn-secondary:hover{
+  background:var(--acento);
+  color:white;
+}
+
+/* ===========================
+   INTRO
+=========================== */
+.plans-intro {
+    text-align: center;
+    padding: 100px 20px; /* antes 140px */
+}
+.plans-intro h2 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+    color: var(--highlight);
+}
+
+.plans-intro p {
+    max-width: 700px;
+    margin: auto;
+    color: var(--text);
+    font-weight: 600;
+}
+
+.plans-stats {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+
+.plans-stats .stat { text-align: center; }
+
+.plans-stats h3 {
+    font-size: 2rem;
+    margin-bottom: 5px;
+}
+
+.plans-stats span {
+    color: var(--text);
+    font-size: 0.9rem;
+}
+
+/* ===========================
+   PLANES
+=========================== */
+.pricing {
+    padding: 10px 20px 100px;
+}
+
+.pricing-container {
+    max-width:1200px;
+    margin:auto;
+    display:flex;
+    gap:40px;
+    justify-content:center;
+    flex-wrap:wrap;
+}
+
+.plan {
+    background:var(--card-bg);
+    border-radius:20px;
+    padding:50px 35px;
+    width:100%;
+    max-width:360px;
+    text-align:center;
+    border:1px solid rgba(0,0,0,0.08);
+    box-shadow:var(--shadow);
+    transition:.4s;
+}
+
+.plan:hover{
+    transform:translateY(-12px);
+    box-shadow:var(--shadow-medium);
+}
+
+.plan h3{
+    font-size:1.6rem;
+    margin-bottom:10px;
+}
+
+.price{
+    font-size:2.6rem;
+    font-weight:700;
+    color:var(--highlight);
+    margin:20px 0;
+}
+
+.price span{
+    font-size:.9rem;
+    color:var(--muted);
+}
+
+.plan ul{
+    list-style:none;
+    margin:30px 0;
+}
+
+.plan ul li{
+    margin-bottom:12px;
+    font-size:.95rem;
+    color: var(--text);
+}
+
+.btn-plan {
+    margin-top: 20px;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    background: var(--highlight);
+    color: black;
+    transition: .3s ease;
+}
+
+.btn-plan:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(251,191,36,0.4);
+}
+
+/* ===========================
+   PLAN DESTACADO
+=========================== */
+.featured {
+    transform: scale(1.05);
+    border: 2px solid var(--highlight);
+    background: linear-gradient(145deg, #1c1c1c, #2a2a2a);
+    color: white;
+    box-shadow: 0 20px 60px rgba(251,191,36,0.25);
+    z-index: 2;
+}
+
+.featured h3,
+.featured ul li { color:#fff; }
+
+.featured .price {
+    color: var(--highlight);
+    font-size: 2.8rem;
+}
+
+.featured .btn-plan { background: var(--highlight); }
+
+.featured .btn-plan:hover {
+    box-shadow: 0 10px 35px rgba(251,191,36,0.6);
+}
+
+.badge {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--highlight);
+    color: black;
+    padding: 8px 22px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    box-shadow: 0 8px 20px rgba(251,191,36,0.4);
+}
+
+/* ===========================
+   CONFIANZA
+=========================== */
+.trust-section {
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.trust-grid {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+.trust-item i{
+    font-size: 2.5rem; /* antes 1.8rem */
+    color: var(--highlight);
+}
+.trust-item h4{
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    position: relative;
+    display: inline-block;
+}
+
+.trust-item h4::after{
+    content: "";
+    display: block;
+    width: 40px;
+    height: 3px;
+    background: var(--highlight);
+    margin: 8px auto 0;
+    border-radius: 5px;
+}
+/* ===========================
+   CIERRE
+=========================== */
+.closing-message {
+    text-align: center;
+    padding: 80px 20px 100px;
+}
+
+.closing-message h2 {
+    font-size: 1.9rem;
+    margin-bottom: 15px;
+}
+
+/* ===========================
+   WHATSAPP FLOAT
+=========================== */
+.support-chat {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    background: #25D366;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    text-decoration: none;
+    z-index: 9999;
+}
+
+.support-chat:hover {
+    background-color: #128C7E;
+    transform: scale(1.1);
+}
+
+footer {
+    padding: 30px;
+    text-align: center;
+    background: var(--marron-profundo);
+    color: white;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media (max-width: 992px) {
+    .featured { transform: scale(1); }
+    .pricing-container { gap: 30px; }
+}
+
+@media (max-width: 768px) {
+
+    .pricing{
+        padding:5px 15px 80px;
+    }
+
+    .pricing-container{
+        flex-direction:column;
+        align-items:center;
+        gap:25px;
+    }
+
+    .plan{
+        max-width:95%;
+        padding:40px 25px;
+    }
+
+    .price{ font-size:2.2rem; }
+}

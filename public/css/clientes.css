@@ -1,0 +1,407 @@
+/* =========================
+   VARIABLES
+========================= */
+
+:root{
+  --marron:#8b5e3c;
+  --marron-oscuro:#5c3a21;
+  --beige:#f1e3d3;
+  --beige-claro:#faf6f1;
+  --blanco:#ffffff;
+  --gris:#6f5f55;
+  --acento:#d4a373;
+  --verde:#4f772d;
+  --rojo:#b23a48;
+  --radius:14px;
+  --shadow:0 10px 30px rgba(0,0,0,0.05);
+}
+
+/* =========================
+   RESET
+========================= */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+body{
+  background:var(--beige-claro);
+  color:#2c2c2c;
+  padding-top:70px;
+}
+/* ================================
+HEADER
+================================ */
+
+.header {
+  position: fixed;  /* Cambié a fixed para que el header quede siempre arriba */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;  /* Ajusté la altura para que sea más compacto */
+  background: white;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 22px;  /* Reduje el padding para ocupar menos espacio */
+  border-bottom: 1px solid var(--border);
+  z-index: 10;
+}
+
+.header h1 {
+  font-size: 18px;  /* Ajusté el tamaño del texto */
+  font-weight: 600;
+  margin: 0;  /* Aseguré que no haya margen alrededor del título */
+}
+
+body {
+  padding-top: 60px;  /* Esto es para darle espacio al header fijo */
+}
+
+.menu-btn{
+
+font-size:22px;
+border:none;
+background:none;
+cursor:pointer;
+
+}
+
+.menu-btn:hover{
+  background:rgba(255,255,255,0.15);
+}
+
+#overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+
+  background:rgba(0,0,0,0.35);
+
+  opacity:0;
+  pointer-events:none;
+
+  transition:0.3s;
+}
+
+#overlay.active{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+.sidebar{
+
+position:fixed;
+
+top:0;
+left:-260px;
+
+width:240px;
+height:100%;
+
+background:white;
+
+border-right:1px solid var(--border);
+
+padding-top:70px;
+
+transition:.3s;
+
+z-index:20;
+
+}
+
+.sidebar.active{
+
+left:0;
+
+}
+
+.sidebar ul{
+
+list-style:none;
+
+}
+
+.sidebar li{
+
+border-bottom:1px solid var(--border);
+
+}
+
+.sidebar a{
+
+display:block;
+
+padding:14px 20px;
+
+text-decoration:none;
+
+color:var(--text);
+
+font-size:14px;
+
+transition:.2s;
+
+}
+
+.sidebar a:hover{
+
+background:#f6f2ee;
+
+}
+
+/* Hover elegante */
+
+.sidebar a:hover{
+  background:rgba(255,255,255,0.08);
+  transform:translateX(6px);
+}
+
+/* Item activo */
+
+.sidebar a.active{
+  background:var(--acento);
+  color:white;
+  box-shadow:0 5px 12px rgba(0,0,0,0.15);
+}
+
+/* =========================
+   LAYOUT
+========================= */
+
+main{
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
+}
+
+.grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+  margin-bottom:25px;
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.card{
+  background:var(--blanco);
+  padding:22px;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+
+.card h2{
+  margin-bottom:18px;
+  color:var(--marron-oscuro);
+}
+
+/* =========================
+   FORM
+========================= */
+
+.form-group{
+  display:flex;
+  flex-direction:column;
+  margin-bottom:15px;
+}
+
+.form-group label{
+  font-size:14px;
+  margin-bottom:6px;
+  color:var(--gris);
+}
+
+input,
+select{
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #ddd;
+  font-size:14px;
+}
+
+input:focus,
+select:focus{
+  outline:none;
+  border-color:var(--acento);
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.btn-primary{
+  background:var(--marron);
+  color:white;
+  border:none;
+  padding:11px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:500;
+  transition:0.2s;
+}
+
+.btn-primary:hover{
+  background:var(--marron-oscuro);
+}
+
+/* =========================
+   CLIENTES LISTA
+========================= */
+
+#clientesLista{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+/* =========================
+   CLIENTE CARD
+========================= */
+
+.cliente-card{
+  border:1px solid #eee;
+  border-radius:12px;
+  padding:15px;
+  transition:0.2s;
+  background:var(--beige-claro);
+}
+
+.cliente-card:hover{
+  transform:translateY(-2px);
+}
+
+.cliente-info strong{
+  font-size:16px;
+  color:var(--marron-oscuro);
+}
+
+.cliente-info p{
+  font-size:14px;
+  margin-top:4px;
+  color:var(--gris);
+}
+
+/* =========================
+   BOTON ELIMINAR CLIENTE
+========================= */
+
+.btn-eliminar{
+  margin-top:10px;
+  background:var(--rojo);
+  color:white;
+  border:none;
+  padding:8px 10px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:13px;
+}
+
+/* =========================
+   COMPRAS
+========================= */
+
+.compras-container{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid #eee;
+  display:none;
+}
+
+.cliente-card.activo .compras-container{
+  display:block;
+}
+
+.compra-item{
+  background:white;
+  border-radius:10px;
+  padding:10px;
+  margin-top:10px;
+  border:1px solid #eee;
+}
+
+.compra-item p{
+  font-size:14px;
+}
+
+.compra-botones{
+  display:flex;
+  gap:10px;
+  margin-top:8px;
+}
+
+.compra-botones button{
+  border:none;
+  padding:6px 10px;
+  border-radius:6px;
+  font-size:13px;
+  cursor:pointer;
+}
+
+.compra-botones button:first-child{
+  background:var(--acento);
+  color:white;
+}
+
+.compra-botones button:last-child{
+  background:var(--rojo);
+  color:white;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:900px){
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Aseguramos que el contenido ocupe más espacio hacia arriba */
+  main {
+    padding: 20px 14px;
+    margin-top: 20px;  /* Reducimos el espacio arriba */
+  }
+}
+
+@media(max-width:600px){
+  body {
+    padding-top: 60px;  /* Reducir el padding superior */
+  }
+
+  .header h1 {
+    font-size: 18px;  /* Reducir el tamaño de fuente */
+  }
+
+  .card {
+    padding: 18px;  /* Reducir el padding de la card */
+  }
+
+  input,
+  select {
+    font-size: 13px;  /* Reducir el tamaño de la fuente de inputs y selects */
+  }
+
+  /* Asegura que el espacio entre las cards sea adecuado */
+  .grid-2 {
+    margin-top: 0; /* Ajustar el espacio entre las cards */
+  }
+
+  /* Mejorar la visualización del menú */
+  .sidebar {
+    padding-top: 60px; /* Reducir el padding en la sidebar */
+  }
+}

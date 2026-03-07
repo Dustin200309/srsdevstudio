@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Recetas</title>
+    <link rel="stylesheet" href="css/recetas.css">
+</head>
+
+<body>
+
+<!-- ================= MODAL PERSONALIZADO ================= -->
+<div id="customModal" class="custom-modal">
+    <div class="modal-content">
+        <p id="modalMessage"></p>
+        <div class="modal-buttons">
+            <button type="button" id="modalAccept" class="btn-accept">Aceptar</button>
+            <button type="button" id="modalCancel" class="btn-cancel">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<!-- HEADER -->
+<header class="header">
+    <button type="button" class="menu-btn" id="btnMenu">☰</button>
+    <h1>Mis Recetas</h1>
+</header>
+
+<nav class="sidebar" id="sidebar">
+    <ul>
+        <li><a href="home.html">Home</a></li>
+        <li><a href="insumos.html">Insumos</a></li>
+        <li><a href="packing.html">Empaques</a></li>
+        <li><a href="intermedios.html">Productos Intermedios</a></li>
+        <li><a href="recetas.html">Productos Terminados</a></li>
+        <li><a href="intermedio_costeo.html">Costear Producto Intermedio</a></li>
+        <li><a href="dashboard.html">Costear Producto Terminado</a></li>
+        <li><a href="rentabilidad.html">Rentabilidad</a></li>
+        <li><a href="clientes.html">Clientes</a></li>
+        <li><a href="#" id="logoutBtn">Cerrar Sesión</a></li>
+    </ul>
+</nav>
+<!-- OVERLAY -->
+<div class="overlay" id="overlay"></div>
+
+<!-- MAIN -->
+<main class="content">
+    <section class="card">
+        <h2>Recetas Guardadas</h2>
+        <div id="listaRecetas" class="lista-recetas"></div>
+    </section>
+</main>
+
+<!-- SCRIPTS -->
+<script src="js/menu.js"></script>
+<script src="js/recetas.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es-PE">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Inicio | Sistema</title>
+
+<link rel="stylesheet" href="css/home.css">
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!-- Iconos -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay"></div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+
+<div class="sidebar-header">
+<h2>Servicios</h2>
+</div>
+
+<ul>
+
+<li>
+<a href="insumos.html">
+<i class="fa-solid fa-box"></i>
+<span>Insumos</span>
+</a>
+</li>
+
+<li>
+<a href="packing.html">
+<i class="fa-solid fa-box-open"></i>
+<span>Empaques</span>
+</a>
+</li>
+
+<li>
+<a href="intermedios.html">
+<i class="fa-solid fa-layer-group"></i>
+<span>Productos Intermedios</span>
+</a>
+</li>
+
+<li>
+<a href="recetas.html">
+<i class="fa-solid fa-cake-candles"></i>
+<span>Productos Terminados</span>
+</a>
+</li>
+
+<li>
+<a href="intermedio_costeo.html">
+<i class="fa-solid fa-calculator"></i>
+<span>Costear Intermedio</span>
+</a>
+</li>
+
+<li>
+<a href="dashboard.html">
+<i class="fa-solid fa-chart-line"></i>
+<span>Costear Terminado</span>
+</a>
+</li>
+
+<li>
+<a href="rentabilidad.html">
+<i class="fa-solid fa-coins"></i>
+<span>Rentabilidad</span>
+</a>
+</li>
+
+<li>
+<a href="clientes.html">
+<i class="fa-solid fa-users"></i>
+<span>Clientes</span>
+</a>
+</li>
+
+<li class="logout">
+<button id="logoutBtn">
+<i class="fa-solid fa-right-from-bracket"></i>
+Cerrar sesión
+</button>
+</li>
+
+</ul>
+
+</nav>
+
+<!-- CONTENIDO -->
+<div class="main-container">
+
+<!-- NAVBAR -->
+<header class="navbar">
+
+<div class="nav-left">
+
+<button class="menu-btn" id="menuBtn">
+<i class="fa-solid fa-bars"></i>
+</button>
+
+<h1> Inicio</h1>
+
+</div>
+
+<div class="nav-right">
+
+<div class="usuario">
+
+<img src="images/usuario.webp" class="avatar">
+
+<div class="usuario-info">
+<span id="bienvenidaNavbar">Bienvenido</span>
+<small>Usuario</small>
+</div>
+
+</div>
+
+</div>
+
+</header>
+
+<!-- DASHBOARD -->
+<main class="dashboard">
+
+<!-- NOTICIAS -->
+<section class="card">
+
+<div class="card-header">
+<h2>News</h2>
+</div>
+
+<div id="noticias-lista" class="card-content">
+<p class="placeholder">
+Aquí aparecerán novedades o cambios del sistema.
+</p>
+</div>
+
+</section>
+
+<!-- NOTIFICACIONES -->
+<section class="card">
+
+<div class="card-header">
+<h2>Notificaciones</h2>
+</div>
+
+<div id="notificaciones-lista" class="card-content">
+<p class="placeholder">
+Tus alertas y recordatorios aparecerán aquí.
+</p>
+</div>
+
+</section>
+
+<!-- CHAT -->
+<section class="card chat-card">
+
+<div class="card-header">
+<h2>💬 Soporte</h2>
+</div>
+
+<div id="chat-box" class="chat-box"></div>
+
+<div class="chat-input">
+
+<input 
+type="text" 
+id="chat-mensaje" 
+placeholder="Escribe tu mensaje..."
+autocomplete="off"
+>
+
+<button id="btn-enviar-chat">
+<i class="fa-solid fa-paper-plane"></i>
+</button>
+
+</div>
+
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+<p>Sistema interno © 2026 • Desarrollado por SRS</p>
+</footer>
+
+</div>
+
+<script src="js/home.js"></script>
+
+</body>
+</html>

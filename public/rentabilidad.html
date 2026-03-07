@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rentabilidad</title>
+<meta name="theme-color" content="#8b5e3c">
+<link rel="stylesheet" href="css/rentabilidad.css">
+</head>
+
+<body>
+
+<header class="header">
+    <button class="menu-btn" id="btnMenu">☰</button>
+    <h1>Rentabilidad</h1>
+</header>
+
+<nav class="sidebar" id="sidebar">
+    <ul>
+        <li><a href="home.html">Home</a></li>
+        <li><a href="insumos.html">Insumos</a></li>
+        <li><a href="packing.html">Empaques</a></li>
+        <li><a href="intermedios.html">Productos Intermedios</a></li>
+        <li><a href="recetas.html">Productos Terminados</a></li>
+        <li><a href="intermedio_costeo.html">Costear Producto Intermedio</a></li>
+        <li><a href="dashboard.html">Costear Producto Terminado</a></li>
+        <li><a href="rentabilidad.html">Rentabilidad</a></li>
+        <li><a href="clientes.html">Clientes</a></li>
+        <li><a href="#" id="logoutBtn">Cerrar Sesión</a></li>
+    </ul>
+</nav>
+
+<div id="overlay"></div>
+
+<main class="content">
+
+<!-- FILTROS -->
+<section class="card filtros">
+    <h2>Análisis de ventas</h2>
+    <div class="filtro-grid">
+        <div class="form-group">
+            <label>Fecha inicio</label>
+            <input type="date" id="fechaInicio">
+        </div>
+        <div class="form-group">
+            <label>Fecha fin</label>
+            <input type="date" id="fechaFin">
+        </div>
+        <button id="btnFiltrar" class="btn-primary">Analizar</button>
+    </div>
+</section>
+
+<!-- KPIs -->
+<section class="kpis">
+    <div class="kpi-card">
+        <p>Ventas Totales</p>
+        <h3 id="ventasTotales">S/ 0</h3>
+    </div>
+
+    <div class="kpi-card">
+        <p>Cantidad de Ventas</p>
+        <h3 id="cantidadVentas">0</h3>
+    </div>
+
+    <div class="kpi-card">
+        <p>Ticket Promedio</p>
+        <h3 id="ticketPromedio">S/ 0</h3>
+    </div>
+
+    <div class="kpi-card">
+        <p>Estado del Negocio</p>
+        <h3 id="estadoRentabilidad">-</h3>
+    </div>
+</section>
+
+<!-- TOP CLIENTES -->
+<section class="top-clientes">
+    <div class="section-header">
+        <h2>Clientes que más compran</h2>
+        <span class="sub">Top 3 del periodo</span>
+    </div>
+    <div class="carousel-container">
+    <div class="carousel-track" id="carouselClientes"></div>
+</div>
+</section>
+
+<!-- GRAFICO -->
+<section class="card">
+    <h2>Ventas del periodo</h2>
+    <div class="chart-container">
+        <canvas id="graficoVentas"></canvas>
+    </div>
+</section>
+
+</main>
+
+<script src="js/chart.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/rentabilidad.js"></script>
+
+</body>
+</html>
