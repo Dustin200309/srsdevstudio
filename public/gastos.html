@@ -15,10 +15,10 @@
 <meta http-equiv="Content-Security-Policy"
 content="
 default-src 'self';
-script-src 'self' https://unpkg.com;
+script-src 'self';
 style-src 'self' 'unsafe-inline';
 img-src 'self' data:;
-media-src 'self';
+media-src 'self' blob:;
 connect-src 'self';
 ">
 
@@ -113,7 +113,7 @@ connect-src 'self';
 <div class="form-group">
 
 <label>Monto</label>
-<input type="number" id="monto" placeholder="S/ 0">
+<input type="number" id="monto" placeholder="0.00" step="0.01" inputmode="decimal">
 
 </div>
 
@@ -220,6 +220,7 @@ type="file"
 id="fileInput"
 style="display:none"
 accept="image/*"
+capture="environment"
 />
 
 
@@ -242,14 +243,11 @@ box-shadow:0 10px 30px rgba(0,0,0,0.2);
 
 <!-- SCRIPTS -->
 
-<script src="js/menu.js"></script>
-<script src="js/gastos.js"></script>
-
-<!-- LECTOR QR LOCAL -->
 <script src="js/jsQR.min.js"></script>
 <script src="js/html5-qrcode.min.js"></script>
 
-
+<script src="js/menu.js"></script>
+<script src="js/gastos.js"></script>
 
 </body>
 </html>
