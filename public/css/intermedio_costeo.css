@@ -137,7 +137,6 @@ OVERLAY
   opacity:1;
   pointer-events:auto;
 }
-/* ================= CONTENT ================= */
 
 .content{
   margin-top:5px;
@@ -145,8 +144,6 @@ OVERLAY
   padding:35px;
   max-width:1300px;
 }
-
-/* ================= CARDS ================= */
 
 section{
   background:var(--blanco);
