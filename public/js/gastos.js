@@ -1,17 +1,17 @@
-const API = "/api/gastos";
+const API="/api/gastos";
 
 /* =========================
 EVENTO CARGA DOCUMENTO
 ========================= */
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded",()=>{
 
-document.getElementById("guardarGasto")?.addEventListener("click", registrarGasto);
+document.getElementById("guardarGasto")?.addEventListener("click",registrarGasto);
 
-document.getElementById("btnEscanearQR")?.addEventListener("click", iniciarEscanerQR);
+document.getElementById("btnEscanearQR")?.addEventListener("click",iniciarEscanerQR);
 
-document.getElementById("fileInput")?.addEventListener("change", procesarQR);
+document.getElementById("fileInput")?.addEventListener("change",procesarQR);
 
-document.getElementById("ticketOCR")?.addEventListener("change", procesarTicketOCR);
+document.getElementById("ticketOCR")?.addEventListener("change",procesarTicketOCR);
 
 cargarGastos();
 
@@ -23,40 +23,40 @@ ESCANEAR QR DESDE IMAGEN
 ========================= */
 function procesarQR(event){
 
-const file = event.target.files[0];
+const file=event.target.files[0];
 if(!file) return;
 
-const reader = new FileReader();
+const reader=new FileReader();
 
-reader.onload = function(e){
+reader.onload=e=>{
 
-const img = new Image();
+const img=new Image();
 
-img.onload = function(){
+img.onload=()=>{
 
-const canvas = document.createElement("canvas");
-const ctx = canvas.getContext("2d");
+const canvas=document.createElement("canvas");
+const ctx=canvas.getContext("2d");
 
-canvas.width = img.width;
-canvas.height = img.height;
+canvas.width=img.width;
+canvas.height=img.height;
 
 ctx.drawImage(img,0,0);
 
-const imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
+const imageData=ctx.getImageData(0,0,canvas.width,canvas.height);
 
-const code = jsQR(imageData.data,canvas.width,canvas.height);
+const code=jsQR(imageData.data,canvas.width,canvas.height);
 
 if(code){
-procesarContenidoQR(code.data);
+procesarContenidoQR(code.data,file);
 }else{
-showAlert("No se detectó QR, usando OCR...", "info");
+showAlert("QR no detectado, usando OCR...","info");
 analizarTicketImagen(file);
 }
 
 event.target.value="";
 };
 
-img.src = e.target.result;
+img.src=e.target.result;
 
 };
 
@@ -66,37 +66,49 @@ reader.readAsDataURL(file);
 
 
 /* =========================
-PROCESAR QR
+PROCESAR CONTENIDO QR
 ========================= */
-function procesarContenidoQR(contenido){
+function procesarContenidoQR(contenido,file){
 
-contenido = contenido.trim();
+contenido=contenido.trim();
 
-const montoInput = document.getElementById("monto");
-const fechaInput = document.getElementById("fecha");
-const descInput = document.getElementById("descripcion");
+const montoInput=document.getElementById("monto");
+const fechaInput=document.getElementById("fecha");
+const descInput=document.getElementById("descripcion");
 
-/* QR SUNAT */
+/* =========================
+1 QR SUNAT
+========================= */
 
 if(contenido.includes("|")){
 
-const partes = contenido.split("|");
+const partes=contenido.split("|");
 
-if(partes.length >= 6){
-
-const ruc = partes[0];
-const tipo = partes[1];
-const serie = partes[2];
-const numero = partes[3];
-const monto = partes[4];
-const fecha = partes[5];
+const ruc=partes[0]||"";
+const tipo=partes[1]||"";
+const serie=partes[2]||"";
+const numero=partes[3]||"";
+const monto=partes[4]||"";
+const fecha=partes[5]||"";
 
 if(!isNaN(parseFloat(monto))){
-montoInput.value = parseFloat(monto);
+
+let montoNum=parseFloat(monto);
+
+/* si parece IGV calcular TOTAL */
+if(montoNum<50){
+
+const base=montoNum/0.18;
+montoNum=base+montoNum;
+
+}
+
+montoInput.value=montoNum.toFixed(2);
+
 }
 
 if(fecha){
-fechaInput.value = fecha;
+fechaInput.value=fecha;
 }
 
 let tipoDoc="Comprobante";
@@ -106,66 +118,86 @@ if(tipo==="01") tipoDoc="Factura";
 
 descInput.value=`${tipoDoc} ${serie}-${numero} | RUC ${ruc}`;
 
-showAlert(`${tipoDoc} detectada`, "success");
+showAlert(`${tipoDoc} detectada`,"success");
+
+if(!fecha && file){
+analizarTicketImagen(file);
+}
 
 return;
-}
+
 }
 
-/* JSON */
+/* =========================
+2 JSON QR
+========================= */
 
 try{
 
-const datos = JSON.parse(contenido);
+const datos=JSON.parse(contenido);
 
-montoInput.value = datos.monto || "";
-fechaInput.value = datos.fecha || "";
-descInput.value = datos.descripcion || "";
+if(datos.monto) montoInput.value=datos.monto;
+if(datos.fecha) fechaInput.value=datos.fecha;
+if(datos.descripcion) descInput.value=datos.descripcion;
 
-if(datos.categoria)
-document.getElementById("categoria").value=datos.categoria;
-
-if(datos.subcategoria)
-document.getElementById("subcategoria").value=datos.subcategoria;
-
-showAlert("Datos cargados desde QR","success");
+showAlert("QR con datos detectado","success");
 
 return;
 
 }catch(e){}
 
-/* URL */
+
+/* =========================
+3 URL
+========================= */
 
 if(/^https?:\/\//i.test(contenido)){
-if(confirm("El QR contiene enlace. ¿Abrir?")){
-window.open(contenido,"_blank");
-}
+
+descInput.value="QR con enlace";
+
+showAlert("QR contiene enlace","info");
+
 return;
+
 }
 
-/* MONTO */
 
-const monto = contenido.match(/\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})/);
+/* =========================
+4 BUSCAR MONTO EN TEXTO
+========================= */
 
-if(monto){
-montoInput.value = monto[0].replace(",",".");
+const montoMatch=contenido.match(/\d{1,4}[.,]\d{2}/);
+
+if(montoMatch){
+montoInput.value=montoMatch[0].replace(",",".");
 }
 
-/* FECHA */
+/* =========================
+5 FECHA
+========================= */
 
-const fecha = contenido.match(/\d{4}-\d{2}-\d{2}/);
+const fechaMatch=contenido.match(/\d{4}-\d{2}-\d{2}|\d{2}\/\d{2}\/\d{4}/);
 
-if(fecha){
-fechaInput.value = fecha[0];
+if(fechaMatch){
+
+let f=fechaMatch[0];
+
+if(f.includes("/")){
+const[d,m,y]=f.split("/");
+f=`${y}-${m}-${d}`;
 }
 
-descInput.value = contenido;
+fechaInput.value=f;
 
-if(!montoInput.value){
-showAlert("QR sin datos suficientes, intenta con foto del ticket","info");
 }
 
-showAlert("QR leído correctamente","success");
+descInput.value=contenido;
+
+if(!montoInput.value && file){
+analizarTicketImagen(file);
+}
+
+showAlert("QR leído","success");
 
 }
 
@@ -175,15 +207,15 @@ ESCANER CAMARA
 ========================= */
 function iniciarEscanerQR(){
 
-const reader = document.getElementById("reader");
+const reader=document.getElementById("reader");
 
 reader.style.display="block";
 
-const qr = new Html5Qrcode("reader");
+const qr=new Html5Qrcode("reader");
 
 qr.start(
 {facingMode:"environment"},
-{fps:10, qrbox:250},
+{fps:10,qrbox:250},
 async(decodedText)=>{
 
 await qr.stop();
@@ -208,7 +240,7 @@ OCR TICKET
 ========================= */
 async function procesarTicketOCR(event){
 
-const file = event.target.files[0];
+const file=event.target.files[0];
 if(!file) return;
 
 analizarTicketImagen(file);
@@ -223,49 +255,51 @@ OCR IMAGEN
 ========================= */
 async function analizarTicketImagen(file){
 
-showAlert("Analizando ticket...", "info");
+showAlert("Analizando ticket...","info");
 
-const worker = await Tesseract.createWorker("spa");
+try{
 
-const {data} = await worker.recognize(file);
+const worker=await Tesseract.createWorker("spa");
+
+const {data}=await worker.recognize(file);
 
 await worker.terminate();
 
 analizarTextoTicket(data.text);
 
+}catch{
+
+showAlert("Error leyendo ticket","error");
+
+}
+
 }
 
 
 /* =========================
-DETECTAR MONTO
+DETECTAR MONTO INTELIGENTE
 ========================= */
 function detectarMontoInteligente(texto){
 
-texto = texto.toUpperCase();
+texto=texto.toUpperCase();
 
-/* TOTAL */
-
-let total = texto.match(/TOTAL[^0-9]*([\d.,]+)/);
+let total=texto.match(/TOTAL[^0-9]*([\d.,]+)/);
 
 if(total){
 return parseFloat(total[1].replace(",","."));
 }
 
-/* IMPORTE */
-
-let importe = texto.match(/IMPORTE[^0-9]*([\d.,]+)/);
+let importe=texto.match(/IMPORTE[^0-9]*([\d.,]+)/);
 
 if(importe){
 return parseFloat(importe[1].replace(",","."));
 }
 
-/* MONTO MAYOR */
-
-const montos = texto.match(/\d+\.\d{2}/g);
+const montos=texto.match(/\d+[.,]\d{2}/g);
 
 if(montos){
 
-const nums = montos.map(n=>parseFloat(n));
+const nums=montos.map(n=>parseFloat(n.replace(",",".")));
 
 return Math.max(...nums);
 
@@ -286,36 +320,36 @@ const fechaInput=document.getElementById("fecha");
 const descInput=document.getElementById("descripcion");
 const categoriaInput=document.getElementById("categoria");
 
-texto = texto.replace(/\r/g,"");
+texto=texto.replace(/\r/g,"");
 
-const lineas = texto.split("\n").map(l=>l.trim()).filter(l=>l.length>0);
+const lineas=texto.split("\n").map(l=>l.trim()).filter(l=>l);
 
 /* RUC */
 
-const ruc = texto.match(/\b10\d{9}|\b20\d{9}/);
+const ruc=texto.match(/\b10\d{9}|\b20\d{9}/);
 
 /* MONTO */
 
-const montoDetectado = detectarMontoInteligente(texto);
+const monto=detectarMontoInteligente(texto);
 
-if(montoDetectado){
-montoInput.value = montoDetectado.toFixed(2);
+if(monto){
+montoInput.value=monto.toFixed(2);
 }
 
 /* FECHA */
 
-const fecha = texto.match(/\d{2}\/\d{2}\/\d{4}|\d{4}-\d{2}-\d{2}/);
+const fecha=texto.match(/\d{2}\/\d{2}\/\d{4}|\d{4}-\d{2}-\d{2}/);
 
 if(fecha){
 
-let f = fecha[0];
+let f=fecha[0];
 
 if(f.includes("/")){
-const [d,m,y] = f.split("/");
-f = `${y}-${m}-${d}`;
+const[d,m,y]=f.split("/");
+f=`${y}-${m}-${d}`;
 }
 
-fechaInput.value = f;
+fechaInput.value=f;
 
 }
 
@@ -328,7 +362,7 @@ for(let l of lineas){
 if(
 l.length>4 &&
 l.length<40 &&
-!l.match(/\d+\.\d{2}/) &&
+!/\d{3,}/.test(l) &&
 !l.includes("RUC") &&
 !l.includes("TOTAL")
 ){
@@ -338,9 +372,9 @@ break;
 
 }
 
-/* CATEGORIZADOR */
+/* CATEGORIA AUTO */
 
-const t = texto.toLowerCase();
+const t=texto.toLowerCase();
 
 let categoria="OTROS";
 
@@ -355,13 +389,13 @@ categoria="SERVICIOS";
 
 categoriaInput.value=categoria;
 
-descInput.value = empresa || "Ticket";
+descInput.value=empresa||"Ticket";
 
 if(ruc){
-descInput.value += ` | RUC ${ruc[0]}`;
+descInput.value+=` | RUC ${ruc[0]}`;
 }
 
-showAlert("Ticket procesado automáticamente","success");
+showAlert("Ticket procesado","success");
 
 }
 
@@ -408,7 +442,7 @@ const res=await fetch(API,{
 method:"POST",
 headers:{
 "Content-Type":"application/json",
-"Authorization":`Bearer ${token}`
+Authorization:`Bearer ${token}`
 },
 body:JSON.stringify({categoria,subcategoria,monto,descripcion,fecha})
 });
@@ -518,17 +552,10 @@ ELIMINAR
 function agregarEventListenersEliminar(){
 
 document.querySelectorAll(".eliminar-btn").forEach(btn=>{
-
-btn.addEventListener("click",()=>{
-
-eliminarGasto(btn.dataset.id);
-
-});
-
+btn.addEventListener("click",()=>eliminarGasto(btn.dataset.id));
 });
 
 }
-
 
 async function eliminarGasto(id){
 
@@ -551,7 +578,7 @@ RESUMEN
 ========================= */
 function calcularResumen(gastos){
 
-let totalMes=0, insumos=0, servicios=0, mano=0;
+let totalMes=0,insumos=0,servicios=0,mano=0;
 
 const mes=new Date().getMonth();
 const año=new Date().getFullYear();
@@ -599,7 +626,10 @@ setTimeout(()=>alert.classList.add("show"),100);
 setTimeout(()=>{
 
 alert.classList.remove("show");
+
+if(alert.parentNode){
 document.body.removeChild(alert);
+}
 
 },3000);
 
