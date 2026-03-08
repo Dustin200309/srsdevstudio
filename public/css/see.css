@@ -232,7 +232,15 @@ body.dark-mode .theme-toggle{
   font-size:.9rem;
 }
 
+/* Para el enlace dentro del botón */
+.btn-primary a {
+    color: white; /* Asegura que el texto sea blanco */
+    text-decoration: none; /* Quita el subrayado */
+}
 
+.btn-primary:hover a {
+    color: white; /* Asegura que el texto se mantenga blanco en hover */
+}
 /* =====================================================
    7️⃣ HERO SLIDER
 ===================================================== */
