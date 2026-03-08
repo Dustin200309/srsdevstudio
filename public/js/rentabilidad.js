@@ -1,341 +1,455 @@
-const API_URL = "/api/rentabilidad";
+const API_URL="/api/rentabilidad";
 
-let chart = null;
-let carouselInterval = null;
+let chart=null;
+let carouselInterval=null;
 
-document.addEventListener("DOMContentLoaded", () => {
+/* =========================
+INIT
+========================= */
 
-    if (!document.getElementById("ventasTotales")) return;
+document.addEventListener("DOMContentLoaded",()=>{
 
-    document
-        .getElementById("btnFiltrar")
-        ?.addEventListener("click", cargarRentabilidad);
+if(!document.getElementById("ventasTotales")) return;
 
-    cargarRentabilidad();
+setFechasMes();
+
+document
+.getElementById("btnFiltrar")
+?.addEventListener("click",cargarRentabilidad);
+
+cargarRentabilidad();
+
 });
+
+
+/* =========================
+FECHAS MES ACTUAL
+========================= */
+
+function setFechasMes(){
+
+const hoy=new Date();
+
+const inicio=new Date(
+hoy.getFullYear(),
+hoy.getMonth(),
+1
+);
+
+document.getElementById("fechaInicio").value=
+inicio.toISOString().split("T")[0];
+
+document.getElementById("fechaFin").value=
+hoy.toISOString().split("T")[0];
+
+}
+
 
 /* =========================
 API FETCH
 ========================= */
 
-async function apiFetch(url) {
+async function apiFetch(url){
 
-    const token = localStorage.getItem("token");
+const token=localStorage.getItem("token");
 
-    const response = await fetch(url, {
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json"
-        }
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-        throw new Error(data.message || "Error en la API");
-    }
-
-    return data;
+const response=await fetch(url,{
+headers:{
+Authorization:`Bearer ${token}`,
+"Content-Type":"application/json"
 }
+});
+
+const data=await response.json();
+
+if(!response.ok){
+throw new Error(data.message||"Error en la API");
+}
+
+return data;
+
+}
+
 
 /* =========================
 CARGAR RENTABILIDAD
 ========================= */
 
-async function cargarRentabilidad() {
+async function cargarRentabilidad(){
 
-    try {
+try{
 
-        const inicio = document.getElementById("fechaInicio")?.value;
-        const fin = document.getElementById("fechaFin")?.value;
+const inicio=document.getElementById("fechaInicio")?.value;
+const fin=document.getElementById("fechaFin")?.value;
 
-        let url = API_URL;
+let url=API_URL;
 
-        if (inicio && fin) {
+if(inicio && fin){
 
-            if (inicio > fin) {
-                alert("La fecha inicio no puede ser mayor que la fecha fin");
-                return;
-            }
+if(inicio>fin){
+alert("La fecha inicio no puede ser mayor que la fecha fin");
+return;
+}
 
-            url += `?inicio=${inicio}&fin=${fin}`;
-        }
-
-        const data = await apiFetch(url);
-
-        console.log("Datos API:", data);
-
-        mostrarKPIs(data);
-        crearGrafico(data.ventas_por_dia);
-        mostrarTopClientes(data.top_clientes);
-
-    } catch (error) {
-
-        console.error("Error cargando rentabilidad:", error);
-        alert("No se pudo cargar la información");
-
-    }
+url+=`?inicio=${inicio}&fin=${fin}`;
 
 }
+
+const data=await apiFetch(url);
+
+console.log("Datos rentabilidad:",data);
+
+mostrarKPIs(data);
+
+crearGrafico(data.ventas_por_dia);
+
+mostrarTopClientes(data.top_clientes);
+
+}catch(error){
+
+console.error("Error cargando rentabilidad:",error);
+
+alert("No se pudo cargar la información");
+
+}
+
+}
+
 
 /* =========================
-FORMATEAR MONEDA
+FORMATO MONEDA
 ========================= */
 
-function formatearMoneda(valor) {
+function formatearMoneda(valor){
 
-    const numero = Number(valor) || 0;
+const numero=Number(valor)||0;
 
-    return new Intl.NumberFormat("es-PE", {
-        style: "currency",
-        currency: "PEN"
-    }).format(numero);
+return new Intl.NumberFormat("es-PE",{
+style:"currency",
+currency:"PEN"
+}).format(numero);
 
 }
+
 
 /* =========================
-MOSTRAR KPIs
+KPIs FINANCIEROS
 ========================= */
 
-function mostrarKPIs(data) {
+function mostrarKPIs(data){
 
-    const ventas = Number(data?.ventas_totales) || 0;
-    const cantidad = Number(data?.cantidad_ventas) || 0;
-    const ticket = Number(data?.ticket_promedio) || 0;
-    const gastos = Number(data?.gastos_totales) || 0;  // Obtener los gastos totales
+const ventas=Number(data?.ventas_totales)||0;
 
-    // Mostrar KPIs de ventas y gastos
-    document.getElementById("ventasTotales").textContent = formatearMoneda(ventas);
-    document.getElementById("cantidadVentas").textContent = cantidad;
-    document.getElementById("ticketPromedio").textContent = formatearMoneda(ticket);
+const cantidad=Number(data?.cantidad_ventas)||0;
 
-    // Calcular ganancia neta
-    const gananciaNeta = ventas - gastos;
+const ticket=Number(data?.ticket_promedio)||0;
 
-    // Mostrar la ganancia neta
-    document.getElementById("gananciaNeta").textContent = formatearMoneda(gananciaNeta);
-    document.getElementById("gastosTotales").textContent = formatearMoneda(gastos);
+const gastos=Number(data?.gastos_totales)||0;
 
-    const estado = document.getElementById("estadoRentabilidad");
+const costos=Number(data?.costos_productos)||0;
 
-    if (!estado) return;
 
-    if (ventas > 0) {
-        estado.textContent = "Negocio Rentable";
-        estado.style.color = "#2e7d32";
-    } else {
-        estado.textContent = "Sin ventas";
-        estado.style.color = "#b71c1c";
-    }
+/* CALCULOS */
+
+const utilidad=ventas-costos-gastos;
+
+const margen=ventas>0?(utilidad/ventas)*100:0;
+
+
+/* KPIs */
+
+document.getElementById("ventasTotales").textContent=
+formatearMoneda(ventas);
+
+document.getElementById("cantidadVentas").textContent=
+cantidad;
+
+document.getElementById("ticketPromedio").textContent=
+formatearMoneda(ticket);
+
+document.getElementById("gastosTotales").textContent=
+formatearMoneda(gastos);
+
+document.getElementById("gananciaNeta").textContent=
+formatearMoneda(utilidad);
+
+
+/* ESTADO NEGOCIO */
+
+const estado=document.getElementById("estadoRentabilidad");
+
+if(!estado) return;
+
+if(ventas===0){
+
+estado.textContent="Sin ventas";
+estado.style.color="#888";
+return;
+
 }
+
+if(utilidad<0){
+
+estado.textContent="🔴 Negocio en pérdida";
+estado.style.color="#c62828";
+return;
+
+}
+
+if(margen>=30){
+
+estado.textContent=`🟢 Muy rentable (${margen.toFixed(1)}%)`;
+estado.style.color="#2e7d32";
+return;
+
+}
+
+if(margen>=15){
+
+estado.textContent=`🟡 Rentable (${margen.toFixed(1)}%)`;
+estado.style.color="#f9a825";
+return;
+
+}
+
+estado.textContent=`🟠 Casi nada (${margen.toFixed(1)}%)`;
+estado.style.color="#ef6c00";
+
+}
+
 
 /* =========================
 TOP CLIENTES
 ========================= */
 
-function mostrarTopClientes(clientes) {
+function mostrarTopClientes(clientes){
 
-    const track = document.getElementById("carouselClientes");
+const track=document.getElementById("carouselClientes");
 
-    if (!track) return;
+if(!track) return;
 
-    track.innerHTML = "";
+track.innerHTML="";
 
-    if (!Array.isArray(clientes) || clientes.length === 0) {
+if(!Array.isArray(clientes)||clientes.length===0){
 
-        track.innerHTML = `
-        <div class="cliente-vacio">
-            No hay clientes con compras aún
-        </div>
-        `;
+track.innerHTML=`
+<div class="cliente-vacio">
+No hay clientes con compras aún
+</div>
+`;
 
-        return;
-    }
-
-    const medallas = ["🥇", "🥈", "🥉"];
-    const top = clientes.slice(0,3);
-
-    top.forEach((cliente,i)=>{
-
-        const card=document.createElement("div");
-
-        card.className=`cliente-card rank-${i+1}`;
-
-        card.innerHTML=`
-            <span class="medalla">${medallas[i]}</span>
-            <h3>${cliente.nombre}</h3>
-            <p>${formatearMoneda(cliente.total)}</p>
-        `;
-
-        track.appendChild(card);
-
-    });
-
-    /* duplicar para infinito */
-
-    top.forEach((cliente,i)=>{
-
-        const card=document.createElement("div");
-
-        card.className=`cliente-card rank-${i+1}`;
-
-        card.innerHTML=`
-            <span class="medalla">${medallas[i]}</span>
-            <h3>${cliente.nombre}</h3>
-            <p>${formatearMoneda(cliente.total)}</p>
-        `;
-
-        track.appendChild(card);
-
-    });
-
-    iniciarCarrusel(track);
+return;
 
 }
 
+const medallas=["🥇","🥈","🥉"];
+
+const top=clientes.slice(0,3);
+
+top.forEach((cliente,i)=>{
+
+const card=document.createElement("div");
+
+card.className=`cliente-card rank-${i+1}`;
+
+card.innerHTML=`
+
+<span class="medalla">${medallas[i]}</span>
+
+<h3>${cliente.nombre}</h3>
+
+<p>${formatearMoneda(cliente.total)}</p>
+
+`;
+
+track.appendChild(card);
+
+});
+
+
+/* DUPLICAR PARA LOOP */
+
+top.forEach((cliente,i)=>{
+
+const card=document.createElement("div");
+
+card.className=`cliente-card rank-${i+1}`;
+
+card.innerHTML=`
+
+<span class="medalla">${medallas[i]}</span>
+
+<h3>${cliente.nombre}</h3>
+
+<p>${formatearMoneda(cliente.total)}</p>
+
+`;
+
+track.appendChild(card);
+
+});
+
+iniciarCarrusel(track);
+
+}
+
+
 /* =========================
-CARRUSEL INFINITO REAL
+CARRUSEL CLIENTES
 ========================= */
 
 function iniciarCarrusel(track){
 
-    if(carouselInterval){
-        clearInterval(carouselInterval);
-    }
+if(carouselInterval){
+clearInterval(carouselInterval);
+}
 
-    carouselInterval=setInterval(()=>{
+carouselInterval=setInterval(()=>{
 
-        const firstCard=track.firstElementChild;
+const firstCard=track.firstElementChild;
 
-        if(!firstCard) return;
+if(!firstCard) return;
 
-        const gap=18;
+const gap=18;
 
-        const cardWidth=firstCard.offsetWidth+gap;
+const cardWidth=firstCard.offsetWidth+gap;
 
-        track.style.transition="transform 0.6s ease";
+track.style.transition="transform 0.6s ease";
 
-        track.style.transform=`translateX(-${cardWidth}px)`;
+track.style.transform=`translateX(-${cardWidth}px)`;
 
-        setTimeout(()=>{
+setTimeout(()=>{
 
-            track.style.transition="none";
+track.style.transition="none";
 
-            track.appendChild(firstCard);
+track.appendChild(firstCard);
 
-            track.style.transform="translateX(0)";
+track.style.transform="translateX(0)";
 
-        },600);
+},600);
 
-    },3500);
+},3500);
 
 }
 
+
 /* =========================
-CREAR GRAFICO
+GRAFICO VENTAS
 ========================= */
 
-function crearGrafico(datos) {
+function crearGrafico(datos){
 
-    const canvas = document.getElementById("graficoVentas");
+const canvas=document.getElementById("graficoVentas");
 
-    if (!canvas) return;
+if(!canvas) return;
 
-    const ctx = canvas.getContext("2d");
+const ctx=canvas.getContext("2d");
 
-    if (chart) {
-        chart.destroy();
-        chart = null;
-    }
+if(chart){
 
-    if (!Array.isArray(datos) || datos.length === 0) {
+chart.destroy();
+chart=null;
 
-        chart = new Chart(ctx, {
+}
 
-            type: "bar",
+if(!Array.isArray(datos)||datos.length===0){
 
-            data: {
-                labels: ["Sin datos"],
-                datasets: [{
-                    label: "Ventas",
-                    data: [0],
-                    backgroundColor: "#ddd"
-                }]
-            },
+chart=new Chart(ctx,{
 
-            options: {
-                responsive:true,
-                plugins:{legend:{display:false}}
-            }
+type:"bar",
 
-        });
+data:{
+labels:["Sin datos"],
+datasets:[
+{
+label:"Ventas",
+data:[0],
+backgroundColor:"#ddd"
+}
+]
+},
 
-        return;
-    }
+options:{
+responsive:true,
+plugins:{legend:{display:false}}
+}
 
-    const labels = datos.map(d => d.fecha.split("T")[0]);
-    const valores = datos.map(d => Number(d.total) || 0);
+});
 
-    chart = new Chart(ctx, {
+return;
 
-        type: "bar",
+}
 
-        data: {
+const labels=datos.map(d=>d.fecha.split("T")[0]);
 
-            labels,
+const valores=datos.map(d=>Number(d.total)||0);
 
-            datasets: [{
-                label: "Ventas (S/)",
-                data: valores,
-                backgroundColor: "rgba(122,78,45,0.85)",
-                borderColor: "#7a4e2d",
-                borderWidth: 2,
-                borderRadius: 8,
-                barThickness: 42
-            }]
+chart=new Chart(ctx,{
 
-        },
+type:"bar",
 
-        options: {
+data:{
 
-            responsive: true,
-            maintainAspectRatio: false,
+labels,
 
-            animation:{
-                duration:900,
-                easing:"easeOutQuart"
-            },
+datasets:[
 
-            plugins: {
+{
+label:"Ventas (S/)",
+data:valores,
+backgroundColor:"rgba(139,94,60,0.9)",
+borderRadius:8,
+barThickness:42
+}
 
-                legend:{display:false},
+]
 
-                tooltip:{
-                    backgroundColor:"#2f1b12",
-                    callbacks:{
-                        label:ctx=>"Ventas: S/ "+ctx.raw
-                    }
-                }
+},
 
-            },
+options:{
 
-            scales:{
+responsive:true,
 
-                x:{
-                    grid:{display:false},
-                    ticks:{color:"#5b4638"}
-                },
+maintainAspectRatio:false,
 
-                y:{
-                    beginAtZero:true,
-                    grid:{color:"#eee"},
-                    ticks:{color:"#5b4638"}
-                }
+animation:{
+duration:900,
+easing:"easeOutQuart"
+},
 
-            }
+plugins:{
 
-        }
+legend:{display:false},
 
-    });
+tooltip:{
+backgroundColor:"#2f1b12",
+callbacks:{
+label:ctx=>"Ventas: "+formatearMoneda(ctx.raw)
+}
+}
+
+},
+
+scales:{
+
+x:{
+grid:{display:false},
+ticks:{color:"#5b4638"}
+},
+
+y:{
+beginAtZero:true,
+grid:{color:"#eee"},
+ticks:{
+color:"#5b4638",
+callback:value=>"S/ "+value
+}
+}
+
+}
+
+}
+
+});
 
 }
