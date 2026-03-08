@@ -5,15 +5,16 @@ EVENTO CARGA DOCUMENTO
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
 
-    document.getElementById("guardarGasto")?.addEventListener("click", registrarGasto);
+document.getElementById("guardarGasto")?.addEventListener("click", registrarGasto);
 
-    document.getElementById("btnEscanearQR")?.addEventListener("click", iniciarEscanerQR);
+document.getElementById("btnEscanearQR")?.addEventListener("click", iniciarEscanerQR);
 
-    document.getElementById("fileInput")?.addEventListener("change", procesarQR);
+document.getElementById("fileInput")?.addEventListener("change", procesarQR);
 
-    document.getElementById("ticketOCR")?.addEventListener("change", procesarTicketOCR);
+document.getElementById("ticketOCR")?.addEventListener("change", procesarTicketOCR);
 
-    cargarGastos();
+cargarGastos();
+
 });
 
 
@@ -22,43 +23,45 @@ ESCANEAR QR DESDE IMAGEN
 ========================= */
 function procesarQR(event){
 
-    const file = event.target.files[0];
-    if(!file) return;
+const file = event.target.files[0];
+if(!file) return;
 
-    const reader = new FileReader();
+const reader = new FileReader();
 
-    reader.onload = function(e){
+reader.onload = function(e){
 
-        const img = new Image();
+const img = new Image();
 
-        img.onload = function(){
+img.onload = function(){
 
-            const canvas = document.createElement("canvas");
-            const ctx = canvas.getContext("2d");
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
 
-            canvas.width = img.width;
-            canvas.height = img.height;
+canvas.width = img.width;
+canvas.height = img.height;
 
-            ctx.drawImage(img,0,0);
+ctx.drawImage(img,0,0);
 
-            const imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
+const imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
 
-            const code = jsQR(imageData.data,canvas.width,canvas.height);
+const code = jsQR(imageData.data,canvas.width,canvas.height);
 
-            if(code){
-                procesarContenidoQR(code.data);
-            }else{
-                showAlert("No se detectó QR, intentando OCR...", "info");
-                analizarTicketImagen(file);
-            }
+if(code){
+procesarContenidoQR(code.data);
+}else{
+showAlert("No se detectó QR, usando OCR...", "info");
+analizarTicketImagen(file);
+}
 
-            event.target.value="";
-        };
+event.target.value="";
+};
 
-        img.src = e.target.result;
-    };
+img.src = e.target.result;
 
-    reader.readAsDataURL(file);
+};
+
+reader.readAsDataURL(file);
+
 }
 
 
@@ -79,7 +82,7 @@ if(contenido.includes("|")){
 
 const partes = contenido.split("|");
 
-if(partes.length >=5){
+if(partes.length >= 6){
 
 const ruc = partes[0];
 const tipo = partes[1];
@@ -89,11 +92,11 @@ const monto = partes[4];
 const fecha = partes[5];
 
 if(!isNaN(parseFloat(monto))){
-montoInput.value=parseFloat(monto);
+montoInput.value = parseFloat(monto);
 }
 
 if(fecha){
-fechaInput.value=fecha;
+fechaInput.value = fecha;
 }
 
 let tipoDoc="Comprobante";
@@ -142,10 +145,10 @@ return;
 
 /* MONTO */
 
-const monto = contenido.match(/\d+\.\d{2}/);
+const monto = contenido.match(/\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})/);
 
 if(monto){
-montoInput.value = monto[0];
+montoInput.value = monto[0].replace(",",".");
 }
 
 /* FECHA */
@@ -157,6 +160,10 @@ fechaInput.value = fecha[0];
 }
 
 descInput.value = contenido;
+
+if(!montoInput.value){
+showAlert("QR sin datos suficientes, intenta con foto del ticket","info");
+}
 
 showAlert("QR leído correctamente","success");
 
@@ -187,8 +194,10 @@ procesarContenidoQR(decodedText);
 },
 ()=>{}
 ).catch(()=>{
+
 showAlert("No se pudo abrir la cámara","error");
 reader.style.display="none";
+
 });
 
 }
@@ -228,7 +237,47 @@ analizarTextoTicket(data.text);
 
 
 /* =========================
-ANALISIS INTELIGENTE
+DETECTAR MONTO
+========================= */
+function detectarMontoInteligente(texto){
+
+texto = texto.toUpperCase();
+
+/* TOTAL */
+
+let total = texto.match(/TOTAL[^0-9]*([\d.,]+)/);
+
+if(total){
+return parseFloat(total[1].replace(",","."));
+}
+
+/* IMPORTE */
+
+let importe = texto.match(/IMPORTE[^0-9]*([\d.,]+)/);
+
+if(importe){
+return parseFloat(importe[1].replace(",","."));
+}
+
+/* MONTO MAYOR */
+
+const montos = texto.match(/\d+\.\d{2}/g);
+
+if(montos){
+
+const nums = montos.map(n=>parseFloat(n));
+
+return Math.max(...nums);
+
+}
+
+return null;
+
+}
+
+
+/* =========================
+ANALISIS OCR
 ========================= */
 function analizarTextoTicket(texto){
 
@@ -237,9 +286,9 @@ const fechaInput=document.getElementById("fecha");
 const descInput=document.getElementById("descripcion");
 const categoriaInput=document.getElementById("categoria");
 
-texto = texto.replace(/\s+/g," ");
+texto = texto.replace(/\r/g,"");
 
-const lineas = texto.split("\n").filter(l=>l.trim());
+const lineas = texto.split("\n").map(l=>l.trim()).filter(l=>l.length>0);
 
 /* RUC */
 
@@ -247,11 +296,10 @@ const ruc = texto.match(/\b10\d{9}|\b20\d{9}/);
 
 /* MONTO */
 
-const montos = texto.match(/\d{1,4}\.\d{2}/g);
+const montoDetectado = detectarMontoInteligente(texto);
 
-if(montos){
-const mayor=Math.max(...montos.map(Number));
-montoInput.value=mayor.toFixed(2);
+if(montoDetectado){
+montoInput.value = montoDetectado.toFixed(2);
 }
 
 /* FECHA */
@@ -260,14 +308,14 @@ const fecha = texto.match(/\d{2}\/\d{2}\/\d{4}|\d{4}-\d{2}-\d{2}/);
 
 if(fecha){
 
-let f=fecha[0];
+let f = fecha[0];
 
 if(f.includes("/")){
-const [d,m,y]=f.split("/");
-f=`${y}-${m}-${d}`;
+const [d,m,y] = f.split("/");
+f = `${y}-${m}-${d}`;
 }
 
-fechaInput.value=f;
+fechaInput.value = f;
 
 }
 
@@ -277,7 +325,13 @@ let empresa="";
 
 for(let l of lineas){
 
-if(l.length>4 && l.length<40 && !l.match(/\d{3,}/)){
+if(
+l.length>4 &&
+l.length<40 &&
+!l.match(/\d+\.\d{2}/) &&
+!l.includes("RUC") &&
+!l.includes("TOTAL")
+){
 empresa=l;
 break;
 }
@@ -303,7 +357,9 @@ categoriaInput.value=categoria;
 
 descInput.value = empresa || "Ticket";
 
-if(ruc) descInput.value += ` | RUC ${ruc[0]}`;
+if(ruc){
+descInput.value += ` | RUC ${ruc[0]}`;
+}
 
 showAlert("Ticket procesado automáticamente","success");
 
@@ -357,8 +413,6 @@ headers:{
 body:JSON.stringify({categoria,subcategoria,monto,descripcion,fecha})
 });
 
-const data=await res.json();
-
 if(!res.ok) throw new Error();
 
 showAlert("Gasto registrado","success");
@@ -366,7 +420,7 @@ showAlert("Gasto registrado","success");
 limpiarFormulario();
 cargarGastos();
 
-}catch(e){
+}catch{
 
 showAlert("Error registrando gasto","error");
 
