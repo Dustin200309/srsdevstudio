@@ -268,12 +268,53 @@ color:var(--gris);
 .placeholder{
 opacity:.7;
 }
-.notificacion {
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
+/* =====================================================
+   NOTIFICACIONES MEJORADAS
+===================================================== */
+
+.notificacion{
+padding:14px;
+margin-bottom:14px;
+border:1px solid var(--border);
+border-radius:12px;
+background:var(--blanco);
+display:flex;
+flex-direction:column;
+gap:10px;
+animation:fadeIn .3s ease;
+}
+
+/* imagen dentro de la notificación */
+
+.notificacion-img{
+width:100%;
+max-height:180px;
+object-fit:cover;
+border-radius:10px;
+border:1px solid var(--border);
+}
+
+/* texto */
+
+.notificacion p{
+font-size:14px;
+color:var(--text);
+line-height:1.4;
+}
+
+/* fecha */
+
+.notificacion span{
+font-size:12px;
+color:var(--gris);
+}
+
+/* acciones */
+
+.notificacion-actions{
+display:flex;
+justify-content:flex-end;
+margin-top:5px;
 }
 
 .btn-eliminar {

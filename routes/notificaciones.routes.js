@@ -1,17 +1,64 @@
 const express = require('express');
 const router = express.Router();
-const notificacionesController = require('../controllers/notificacionesController'); // Asegúrate de que el controlador está importado correctamente
+const multer = require('multer');
+const path = require('path');
+const notificacionesController = require('../controllers/notificacionesController');
 
-// Crear notificación
-router.post('/', notificacionesController.crearNotificacion);
 
-// Obtener notificaciones (para los usuarios)
-router.get('/', notificacionesController.obtenerNotificaciones);
+/* =============================
+   CONFIGURAR MULTER
+============================= */
 
-// Marcar una notificación como leída
-router.post('/marcar-como-leida', notificacionesController.marcarComoLeida);
+const storage = multer.diskStorage({
 
-// Eliminar una notificación
-router.post('/eliminar', notificacionesController.eliminarNotificacion);
+destination: (req, file, cb) => {
+cb(null, 'uploads/notificaciones/');
+},
+
+filename: (req, file, cb) => {
+
+const extension = path.extname(file.originalname);
+
+cb(null, Date.now() + extension);
+
+}
+
+});
+
+const upload = multer({ storage });
+
+
+/* =============================
+   RUTAS
+============================= */
+
+// Crear notificación (CON imagen)
+router.post(
+'/',
+upload.single('imagen'),
+notificacionesController.crearNotificacion
+);
+
+
+// Obtener notificaciones
+router.get(
+'/',
+notificacionesController.obtenerNotificaciones
+);
+
+
+// Marcar como leída
+router.post(
+'/marcar-como-leida',
+notificacionesController.marcarComoLeida
+);
+
+
+// Eliminar
+router.post(
+'/eliminar',
+notificacionesController.eliminarNotificacion
+);
+
 
 module.exports = router;

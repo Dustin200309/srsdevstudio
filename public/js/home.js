@@ -41,14 +41,16 @@ document.addEventListener("DOMContentLoaded", () => {
        UTILIDADES
     ====================================================== */
 
-    const escapeHTML = (str) =>
-        str.replace(/[&<>"']/g, (m) => ({
+    const escapeHTML = (str) => {
+        if (!str) return "";
+        return str.replace(/[&<>"']/g, m => ({
             "&": "&amp;",
             "<": "&lt;",
             ">": "&gt;",
             '"': "&quot;",
             "'": "&#039;"
         }[m]));
+    };
 
     const formatearFecha = (fecha) => {
         if (!fecha) return "";
@@ -68,13 +70,18 @@ document.addEventListener("DOMContentLoaded", () => {
     async function apiFetch(url, options = {}) {
         try {
 
+            const headers = {
+                Authorization: `Bearer ${token}`,
+                ...(options.headers || {})
+            };
+
+            if (!(options.body instanceof FormData)) {
+                headers["Content-Type"] = "application/json";
+            }
+
             const res = await fetch(url, {
                 method: options.method || "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                    ...(options.headers || {})
-                },
+                headers,
                 body: options.body || null
             });
 
@@ -101,6 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ====================================================== */
 
     async function cargarPerfil() {
+
         const perfil = await apiFetch(API.perfil);
         if (!perfil) return;
 
@@ -115,6 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
             el.bienvenidaNavbar.innerHTML =
                 `<strong>${escapeHTML(usuarioActual)}</strong>`;
         }
+
     }
 
     /* ======================================================
@@ -122,12 +131,14 @@ document.addEventListener("DOMContentLoaded", () => {
     ====================================================== */
 
     async function cargarNoticias() {
+
         const noticias = await apiFetch(API.noticias);
 
         if (!el.noticiasLista) return;
 
         if (!noticias || !noticias.length) {
-            el.noticiasLista.innerHTML = `<p class="placeholder">No hay noticias disponibles</p>`;
+            el.noticiasLista.innerHTML =
+                `<p class="placeholder">No hay noticias disponibles</p>`;
             return;
         }
 
@@ -138,6 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <span>${formatearFecha(n.fecha_creacion)}</span>
             </div>
         `).join("");
+
     }
 
     /* ======================================================
@@ -146,47 +158,78 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function cargarNotificaciones() {
 
-        const notificaciones = await apiFetch(API.notificaciones);
+        const response = await apiFetch(API.notificaciones);
+        const notificaciones = response?.data || [];
 
         if (!el.notificacionesLista) return;
 
-        if (!notificaciones || !notificaciones.length) {
+        if (!notificaciones.length) {
             el.notificacionesLista.innerHTML =
                 `<p class="placeholder">No hay notificaciones</p>`;
             return;
         }
 
-        el.notificacionesLista.innerHTML = notificaciones.map(n => `
-            <div class="notificacion" id="notificacion-${n.id}">
-                <p>${escapeHTML(n.mensaje)}</p>
-                <span>${formatearFecha(n.fecha_creacion)}</span>
-                <div class="notificacion-actions">
-                    <!-- Botón de "Eliminar" -->
-                    <button class="btn-eliminar" id="eliminar-${n.id}">Eliminar</button>
-                </div>
-            </div>
-        `).join("");
+        const eliminadas = JSON.parse(
+            localStorage.getItem("notificaciones_eliminadas") || "[]"
+        );
 
-        // Asignar el evento de eliminar a los botones
-        notificaciones.forEach(n => {
-            document.getElementById(`eliminar-${n.id}`).addEventListener("click", () => eliminarNotificacion(n.id));
+        const visibles = notificaciones.filter(
+            n => !eliminadas.includes(n.id)
+        );
+
+        el.notificacionesLista.innerHTML = visibles.map(n => {
+
+            const imagen = n.imagen
+                ? `<img src="${escapeHTML(n.imagen)}" class="notificacion-img">`
+                : "";
+
+            return `
+                <div class="notificacion" id="notificacion-${n.id}">
+                    ${imagen}
+                    <p>${escapeHTML(n.mensaje)}</p>
+                    <span>${formatearFecha(n.fecha_creacion)}</span>
+
+                    <div class="notificacion-actions">
+                        <button class="btn-eliminar-noti" data-id="${n.id}">
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+            `;
+
+        }).join("");
+
+        document.querySelectorAll(".btn-eliminar-noti").forEach(btn => {
+
+            btn.addEventListener("click", () => {
+
+                const id = parseInt(btn.dataset.id);
+                eliminarNotificacionLocal(id);
+
+            });
+
         });
+
     }
 
-    // Función para eliminar una notificación
-    async function eliminarNotificacion(notificacionId) {
-        const respuesta = await fetch('/api/notificaciones/eliminar', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ notificacionId })
-        });
+    function eliminarNotificacionLocal(id) {
 
-        if (respuesta.ok) {
-            document.getElementById('notificacion-' + notificacionId).remove();
-            alert("Notificación eliminada.");
-        } else {
-            alert("Error al eliminar.");
+        let eliminadas = JSON.parse(
+            localStorage.getItem("notificaciones_eliminadas") || "[]"
+        );
+
+        if (!eliminadas.includes(id)) {
+            eliminadas.push(id);
         }
+
+        localStorage.setItem(
+            "notificaciones_eliminadas",
+            JSON.stringify(eliminadas)
+        );
+
+        const noti = document.getElementById("notificacion-" + id);
+        if (noti) noti.remove();
+
     }
 
     /* ======================================================
@@ -194,11 +237,13 @@ document.addEventListener("DOMContentLoaded", () => {
     ====================================================== */
 
     async function cargarChat() {
+
         const mensajes = await apiFetch(API.chat);
 
         if (!el.chatBox) return;
 
         if (!mensajes || !mensajes.length) {
+
             el.chatBox.innerHTML = `
                 <div class="msg support">
                     Bienvenido al soporte 👋
@@ -208,17 +253,22 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         el.chatBox.innerHTML = mensajes.map(m => {
-            const nombre = m.usuario || m.username || m.remitente || "Admin";
-            const esUsuario = nombre.toLowerCase() === usuarioActual.toLowerCase();
+
+            const remitente = (m.remitente || "").toLowerCase();
+            const esUsuario = remitente === "usuario";
+            const nombre = esUsuario ? usuarioActual : "Soporte";
 
             return `
                 <div class="msg ${esUsuario ? "user" : "support"}">
-                    <strong>${escapeHTML(nombre)}:</strong> ${escapeHTML(m.mensaje)}
+                    <strong>${escapeHTML(nombre)}:</strong>
+                    ${escapeHTML(m.mensaje)}
                 </div>
             `;
+
         }).join("");
 
         scrollChatAbajo();
+
     }
 
     /* ======================================================
@@ -230,7 +280,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!el.chatInput) return;
 
         const mensaje = el.chatInput.value.trim();
-
         if (!mensaje) return;
 
         await apiFetch(API.chat, {
@@ -239,8 +288,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         el.chatInput.value = "";
-
         await cargarChat();
+
     }
 
     /* ======================================================
@@ -253,12 +302,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         el.sidebar.classList.toggle("active");
         el.overlay.classList.toggle("active");
+
     }
 
     function cerrarSidebar() {
 
         el.sidebar?.classList.remove("active");
         el.overlay?.classList.remove("active");
+
     }
 
     /* ======================================================
@@ -266,8 +317,10 @@ document.addEventListener("DOMContentLoaded", () => {
     ====================================================== */
 
     function logout() {
+
         localStorage.removeItem("token");
         window.location.href = "/login";
+
     }
 
     /* ======================================================
@@ -281,9 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     el.logoutBtn?.addEventListener("click", logout);
-
     el.menuBtn?.addEventListener("click", toggleSidebar);
-
     el.overlay?.addEventListener("click", cerrarSidebar);
 
     document.addEventListener("click", (e) => {
@@ -296,25 +347,32 @@ document.addEventListener("DOMContentLoaded", () => {
         ) {
             cerrarSidebar();
         }
+
     });
 
     /* ======================================================
-       AUTO REFRESH CHAT
+       AUTO REFRESH
     ====================================================== */
 
     setInterval(() => {
         cargarChat();
     }, 5000);
 
+    setInterval(() => {
+        cargarNotificaciones();
+    }, 8000);
+
     /* ======================================================
        INIT
     ====================================================== */
 
     async function iniciar() {
+
         await cargarPerfil();
         await cargarNoticias();
         await cargarNotificaciones();
         await cargarChat();
+
     }
 
     iniciar();

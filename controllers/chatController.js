@@ -15,7 +15,7 @@ const poolPromise = sql.connect({
 });
 
 /* =========================
-   OBTENER USUARIOS CON CHAT
+   OBTENER USUARIO CON CHAT
 ========================= */
 async function obtenerUsuariosChat(req, res) {
     try {

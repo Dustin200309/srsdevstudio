@@ -11,6 +11,10 @@ app.use(express.json());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+// SERVIR ARCHIVOS SUBIDOS (IMÁGENES)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -22,9 +26,11 @@ app.get('/login', (req, res) => {
 app.get('/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'home.html'));
 });
+
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
+
 
 // Rutas API
 app.use('/api/auth', require('./routes/auth.routes'));
@@ -39,11 +45,12 @@ app.use('/api/packing', require('./routes/packing.routes'));
 app.use('/api/clientes', require('./routes/clientes.routes'));
 app.use('/api/notificaciones', require('./routes/notificaciones.routes'));
 app.use('/api/rentabilidad', require('./routes/rentabilidad.routes'));
-
-app.use('/api/gastos', require('./routes/gastos.routes')); // 👈 NUEVA RUTA
-
+app.use('/api/gastos', require('./routes/gastos.routes'));
 app.use('/api/chat', require('./routes/chat.routes'));
 app.use('/api/noticias', require('./routes/noticias.routes'));
+
+
+// 404
 app.use((req, res) => {
     res.status(404).json({ error: "Ruta no encontrada" });
 });

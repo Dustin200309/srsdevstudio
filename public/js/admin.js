@@ -29,32 +29,43 @@ const listaUsuariosChat = document.getElementById("lista-usuarios");
 const chatTitulo = document.getElementById("chat-titulo");
 
 
-
 /* =========================
    FETCH GENERICO
 ========================= */
-
 async function apiFetch(url, options = {}) {
 
-    const config = {
-        ...options,
-        headers: {
-            "Content-Type": "application/json",
+    try {
+
+        const headers = {
             Authorization: `Bearer ${token}`,
             ...(options.headers || {})
+        };
+
+        if (!(options.body instanceof FormData)) {
+            headers["Content-Type"] = "application/json";
         }
-    };
 
-    const res = await fetch(url, config);
+        const config = {
+            ...options,
+            headers
+        };
 
-    if (!res.ok) {
-        console.error("API error:", res.status);
-        throw new Error("Error API");
+        const res = await fetch(url, config);
+
+        if (!res.ok) {
+            const text = await res.text();
+            throw new Error(`API ${res.status}: ${text}`);
+        }
+
+        return await res.json();
+
+    } catch (error) {
+
+        console.error("API ERROR:", error);
+        throw error;
+
     }
-
-    return res.json();
 }
-
 
 
 /* =========================
@@ -121,7 +132,6 @@ async function cargarUsuarios() {
 }
 
 
-
 /* =========================
    EVENTOS USUARIOS
 ========================= */
@@ -155,7 +165,6 @@ alert("Error cambiando estado");
 });
 
 
-
 document.querySelectorAll(".btn-reset").forEach(btn => {
 
 btn.onclick = async () => {
@@ -186,7 +195,6 @@ alert("Error cambiando contraseña");
 });
 
 }
-
 
 
 /* =========================
@@ -235,9 +243,8 @@ alert("Error creando usuario");
 }
 
 
-
 /* =========================
-   NOTIFICACIONES
+   NOTIFICACIONES CON IMAGEN
 ========================= */
 
 const btnNotificacion = document.getElementById("btn-enviar-notificacion");
@@ -247,22 +254,36 @@ if (btnNotificacion) {
 btnNotificacion.onclick = async () => {
 
 const mensaje = document.getElementById("mensaje-notificacion").value.trim();
+const imagenInput = document.getElementById("imagen-notificacion");
 
 if (!mensaje) {
 alert("Escribe un mensaje");
 return;
 }
 
+const formData = new FormData();
+formData.append("mensaje", mensaje);
+
+if (imagenInput && imagenInput.files.length > 0) {
+formData.append("imagen", imagenInput.files[0]);
+}
+
 try {
 
-await apiFetch("/api/admin/notificaciones", {
+const res = await fetch("/api/notificaciones", {
 method: "POST",
-body: JSON.stringify({ mensaje })
+headers: {
+Authorization: `Bearer ${token}`
+},
+body: formData
 });
+
+if (!res.ok) throw new Error();
 
 alert("Notificación enviada");
 
 document.getElementById("mensaje-notificacion").value = "";
+if (imagenInput) imagenInput.value = "";
 
 } catch {
 
@@ -273,7 +294,6 @@ alert("Error enviando notificación");
 };
 
 }
-
 
 
 /* =========================
@@ -322,7 +342,6 @@ console.error("Error cargando usuarios chat:", error);
 }
 
 
-
 /* =========================
    CARGAR MENSAJES CHAT
 ========================= */
@@ -364,9 +383,8 @@ console.error("Error cargando chat:", error);
 }
 
 
-
 /* =========================
-   ENVIAR MENSAJE
+   ENVIAR MENSAJE CHAT
 ========================= */
 
 const btnEnviarChat = document.getElementById("btn-enviar-chat");
@@ -376,7 +394,6 @@ if (btnEnviarChat) {
 btnEnviarChat.onclick = async () => {
 
 const input = document.getElementById("chat-mensaje");
-
 const mensaje = input.value.trim();
 
 if (!mensaje) return;
@@ -392,7 +409,7 @@ await apiFetch("/api/chat/admin/responder", {
 method: "POST",
 body: JSON.stringify({
 usuario_id: usuarioChatActivo,
-mensaje: mensaje
+mensaje
 })
 });
 
@@ -409,7 +426,6 @@ alert("Error enviando mensaje");
 };
 
 }
-
 
 
 /* =========================
@@ -442,11 +458,15 @@ overlay.classList.remove("active");
 
 }
 
-const nombre = localStorage.getItem("nombre");
 
-if (nombre) {
-    document.getElementById("bienvenida").textContent =
-        "Bienvenido " + nombre;
+/* =========================
+   BIENVENIDA
+========================= */
+const nombre = localStorage.getItem("nombre");
+const bienvenida = document.getElementById("bienvenida");
+
+if (nombre && bienvenida) {
+bienvenida.textContent = "Bienvenido " + nombre;
 }
 
 /* =========================
@@ -470,7 +490,6 @@ window.location.href = "/login";
 }
 
 
-
 /* =========================
    AUTO REFRESH CHAT
 ========================= */
@@ -478,13 +497,10 @@ window.location.href = "/login";
 setInterval(() => {
 
 if (usuarioChatActivo) {
-
 cargarMensajesChat();
-
 }
 
 }, 4000);
-
 
 
 /* =========================
