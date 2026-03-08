@@ -65,17 +65,49 @@ function procesarQR(event) {
     reader.readAsDataURL(file);
 }
 
-
-/* =========================
-PROCESAR CONTENIDO QR
-========================= */
 function procesarContenidoQR(contenido) {
 
     contenido = contenido.trim();
 
     console.log("QR detectado:", contenido);
 
-    /* JSON */
+    /* =========================
+    DETECTAR QR SUNAT
+    ========================= */
+
+    if (contenido.includes("|")) {
+
+        const partes = contenido.split("|");
+
+        if (partes.length >= 5) {
+
+            const ruc = partes[0];
+            const tipo = partes[1];
+            const serie = partes[2];
+            const monto = partes[3];
+            const fecha = partes[4];
+
+            document.getElementById("monto").value = parseFloat(monto) || "";
+            document.getElementById("fecha").value = fecha || "";
+
+            document.getElementById("descripcion").value =
+                `Comprobante ${serie} - RUC ${ruc}`;
+
+            // categoría automática sugerida
+            const categoria = document.getElementById("categoria");
+            if (categoria && !categoria.value) {
+                categoria.value = "INSUMOS";
+            }
+
+            showAlert("Boleta o factura detectada correctamente", "success");
+
+            return;
+        }
+    }
+
+    /* =========================
+    JSON
+    ========================= */
 
     try {
 
@@ -91,11 +123,13 @@ function procesarContenidoQR(contenido) {
 
         return;
 
-    } catch {}
+    } catch (e) {}
 
-    /* URL */
+    /* =========================
+    URL
+    ========================= */
 
-    if (contenido.startsWith("http://") || contenido.startsWith("https://")) {
+    if (/^https?:\/\//i.test(contenido)) {
 
         if (confirm("El QR contiene un enlace. ¿Abrirlo?")) {
             window.open(contenido, "_blank");
@@ -104,9 +138,11 @@ function procesarContenidoQR(contenido) {
         return;
     }
 
-    /* Detectar monto */
+    /* =========================
+    DETECTAR MONTO
+    ========================= */
 
-    const numero = contenido.match(/\d+(\.\d+)?/);
+    const numero = contenido.match(/\d+(?:\.\d{1,2})?/);
 
     if (numero) {
         document.getElementById("monto").value = numero[0];
@@ -138,23 +174,30 @@ function iniciarEscanerQR() {
         { facingMode: "environment" },
         {
             fps: 10,
-            qrbox: 250
+            qrbox: { width: 250, height: 250 }
         },
-        (decodedText) => {
+        async (decodedText) => {
 
             console.log("QR detectado:", decodedText);
 
-            procesarContenidoQR(decodedText);
-
-            qr.stop();
+            await qr.stop();
 
             reader.style.display = "none";
 
-        },
-        (error) => {}
-    );
-}
+            procesarContenidoQR(decodedText);
 
+        },
+        () => {}
+    ).catch(err => {
+
+        console.error("Error iniciando escáner:", err);
+
+        showAlert("No se pudo iniciar la cámara", "error");
+
+        reader.style.display = "none";
+
+    });
+}
 
 /* =========================
 FORMATEAR MONEDA
