@@ -13,6 +13,10 @@ document.getElementById("fileInput")?.addEventListener("change",procesarQR);
 
 document.getElementById("ticketOCR")?.addEventListener("change",procesarTicketOCR);
 
+document.getElementById("btnEscanearTicket")?.addEventListener("click",()=>{
+document.getElementById("ticketOCR").click();
+});
+
 cargarGastos();
 
 });
