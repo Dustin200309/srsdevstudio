@@ -268,7 +268,54 @@ color:var(--gris);
 .placeholder{
 opacity:.7;
 }
+.notificacion {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
 
+.btn-eliminar {
+    background-color: #D97C55;  /* Un color suave pero llamativo que concuerda con el esquema de tu sitio */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px;  /* Bordes redondeados con un toque suave */
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: capitalize;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  /* Sombra sutil para darle un poco de profundidad */
+    transition: all 0.3s ease-in-out;  /* Transición suave para los efectos */
+}
+
+/* Ícono alineado con el texto */
+.btn-eliminar i {
+    margin-right: 8px;  /* Espacio entre el ícono y el texto */
+    font-size: 16px;  /* Tamaño adecuado para el ícono */
+}
+
+/* Efecto hover: cambia el color y añade un poco de escala */
+.btn-eliminar:hover {
+    background-color: #b76e47;  /* Color más oscuro para el hover */
+    transform: scale(1.05);  /* Ligeramente más grande cuando el usuario pasa el mouse */
+}
+
+/* Efecto al presionar el botón */
+.btn-eliminar:active {
+    transform: scale(0.98);  /* Reduce ligeramente el tamaño para el efecto de clic */
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);  /* Reduce la sombra */
+}
+
+/* Foco y sombra al enfocar el botón */
+.btn-eliminar:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(217, 124, 85, 0.5);  /* Sombra brillante para el foco */
+}
 /* =====================================================
    CHAT CARD
 ===================================================== */

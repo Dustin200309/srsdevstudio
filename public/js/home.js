@@ -66,7 +66,6 @@ document.addEventListener("DOMContentLoaded", () => {
     ====================================================== */
 
     async function apiFetch(url, options = {}) {
-
         try {
 
             const res = await fetch(url, {
@@ -102,7 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
     ====================================================== */
 
     async function cargarPerfil() {
-
         const perfil = await apiFetch(API.perfil);
         if (!perfil) return;
 
@@ -124,7 +122,6 @@ document.addEventListener("DOMContentLoaded", () => {
     ====================================================== */
 
     async function cargarNoticias() {
-
         const noticias = await apiFetch(API.noticias);
 
         if (!el.noticiasLista) return;
@@ -160,44 +157,69 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         el.notificacionesLista.innerHTML = notificaciones.map(n => `
-            <div class="notificacion">
+            <div class="notificacion" id="notificacion-${n.id}">
                 <p>${escapeHTML(n.mensaje)}</p>
                 <span>${formatearFecha(n.fecha_creacion)}</span>
+                <div class="notificacion-actions">
+                    <!-- Botón de "Eliminar" -->
+                    <button class="btn-eliminar" id="eliminar-${n.id}">Eliminar</button>
+                </div>
             </div>
         `).join("");
+
+        // Asignar el evento de eliminar a los botones
+        notificaciones.forEach(n => {
+            document.getElementById(`eliminar-${n.id}`).addEventListener("click", () => eliminarNotificacion(n.id));
+        });
+    }
+
+    // Función para eliminar una notificación
+    async function eliminarNotificacion(notificacionId) {
+        const respuesta = await fetch('/api/notificaciones/eliminar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ notificacionId })
+        });
+
+        if (respuesta.ok) {
+            document.getElementById('notificacion-' + notificacionId).remove();
+            alert("Notificación eliminada.");
+        } else {
+            alert("Error al eliminar.");
+        }
     }
 
     /* ======================================================
        CHAT
     ====================================================== */
 
-   async function cargarChat() {
-    const mensajes = await apiFetch(API.chat);
+    async function cargarChat() {
+        const mensajes = await apiFetch(API.chat);
 
-    if (!el.chatBox) return;
+        if (!el.chatBox) return;
 
-    if (!mensajes || !mensajes.length) {
-        el.chatBox.innerHTML = `
-            <div class="msg support">
-                Bienvenido al soporte 👋
-            </div>
-        `;
-        return;
+        if (!mensajes || !mensajes.length) {
+            el.chatBox.innerHTML = `
+                <div class="msg support">
+                    Bienvenido al soporte 👋
+                </div>
+            `;
+            return;
+        }
+
+        el.chatBox.innerHTML = mensajes.map(m => {
+            const nombre = m.usuario || m.username || m.remitente || "Admin";
+            const esUsuario = nombre.toLowerCase() === usuarioActual.toLowerCase();
+
+            return `
+                <div class="msg ${esUsuario ? "user" : "support"}">
+                    <strong>${escapeHTML(nombre)}:</strong> ${escapeHTML(m.mensaje)}
+                </div>
+            `;
+        }).join("");
+
+        scrollChatAbajo();
     }
-
-    el.chatBox.innerHTML = mensajes.map(m => {
-        const nombre = m.usuario || m.username || m.remitente || "Admin";
-        const esUsuario = nombre.toLowerCase() === usuarioActual.toLowerCase();
-
-        return `
-            <div class="msg ${esUsuario ? "user" : "support"}">
-                <strong>${escapeHTML(nombre)}:</strong> ${escapeHTML(m.mensaje)}
-            </div>
-        `;
-    }).join("");
-
-    scrollChatAbajo();
-}
 
     /* ======================================================
        ENVIAR MENSAJE
@@ -289,7 +311,6 @@ document.addEventListener("DOMContentLoaded", () => {
     ====================================================== */
 
     async function iniciar() {
-
         await cargarPerfil();
         await cargarNoticias();
         await cargarNotificaciones();
