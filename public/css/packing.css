@@ -30,132 +30,93 @@ body{
   min-height:100vh;
 }
 
-/* ================================
-HEADER
-================================ */
+/* ================================ HEADER ================================ */
 
-.header{
-
-position:sticky;
-top:0;
-
-display:flex;
-align-items:center;
-gap:15px;
-
-padding:16px 22px;
-
-background:white;
-
-border-bottom:1px solid var(--border);
-
-z-index:10;
-
+.header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 22px;
+  background: white;
+  border-bottom: 1px solid var(--border);
+  z-index: 10;
 }
 
 .header h1{
-
-font-size:20px;
-font-weight:600;
-
+  font-size:20px;
+  font-weight:600;
 }
 
 .menu-btn{
-
-font-size:22px;
-border:none;
-background:none;
-cursor:pointer;
-
+  font-size:22px;
+  border:none;
+  background:none;
+  cursor:pointer;
 }
 
+/* ================================ SIDEBAR ================================ */
 
-/* ================================
-SIDEBAR
-================================ */
-
-.sidebar{
-
-position:fixed;
-
-top:0;
-left:-260px;
-
-width:240px;
-height:100%;
-
-background:white;
-
-border-right:1px solid var(--border);
-
-padding-top:70px;
-
-transition:.3s;
-
-z-index:20;
-
+.sidebar {
+  position:fixed;
+  top:0;
+  left:-260px;
+  width:240px;
+  height:100%;
+  background:white;
+  border-right:1px solid var(--border);
+  padding-top:70px;
+  transition:.3s;
+  z-index:20;
 }
 
-.sidebar.active{
-
-left:0;
-
+.sidebar.active {
+  left:0;
 }
 
-.sidebar ul{
-
-list-style:none;
-
+.sidebar ul {
+  list-style:none;
 }
 
-.sidebar li{
-
-border-bottom:1px solid var(--border);
-
+.sidebar li {
+  border-bottom:1px solid var(--border);
 }
 
-.sidebar a{
-
-display:block;
-
-padding:14px 20px;
-
-text-decoration:none;
-
-color:var(--text);
-
-font-size:14px;
-
-transition:.2s;
-
+.sidebar a {
+  display:block;
+  padding:14px 20px;
+  text-decoration:none;
+  color:var(--text);
+  font-size:14px;
+  transition:.2s;
 }
 
-.sidebar a:hover{
-
-background:#f6f2ee;
-
+.sidebar a:hover {
+  background:#f6f2ee;
 }
 
 #overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
-    opacity: 0;
-    pointer-events: none;
-    transition: 0.3s;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s;
 }
 
 #overlay.active {
-    opacity: 1;
-    pointer-events: auto;
+  opacity: 1;
+  pointer-events: auto;
 }
+
 /* ================= CONTENT ================= */
 
 .content{
-  margin-top:100px;
+  margin-top:10px;
   margin-left:260px;
   padding:40px;
   max-width:1200px;
@@ -253,14 +214,75 @@ input:focus, select:focus{
 
 .search-input{
   width:100%;
-  padding:14px;
-  border-radius:40px;
+  padding:14px 18px;
+  border-radius:30px;
   border:1px solid #e6ddd6;
-  background:var(--beige-claro);
+  background:white;
   font-size:14px;
+  box-shadow:var(--shadow-sm);
+  transition:var(--transition);
+}
+
+.search-input:focus{
+  outline:none;
+  border-color:var(--marron);
+  box-shadow:0 0 0 3px rgba(139,94,60,0.12);
 }
 
 /* ================= LISTA ================= */
+
+.packing-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  background:var(--beige-claro);
+  border-radius:14px;
+  padding:18px;
+  border:1px solid #eee;
+  transition:var(--transition);
+}
+
+.packing-item:hover{
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-sm);
+}
+
+.packing-info h3{
+  color:var(--marron-oscuro);
+  margin-bottom:4px;
+  font-size:16px;
+}
+
+.packing-info p{
+  font-size:13px;
+  margin:2px 0;
+}
+
+.costo-unitario{
+  margin-top:6px;
+  font-weight:600;
+  color:var(--verde);
+}
+
+.packing-actions{
+  display:flex;
+  gap:8px;
+}
+
+.btn-icon{
+  border:none;
+  background:white;
+  border-radius:8px;
+  cursor:pointer;
+  padding:6px 8px;
+  font-size:14px;
+  box-shadow:var(--shadow-sm);
+  transition:var(--transition);
+}
+
+.btn-icon:hover{
+  transform:scale(1.1);
+}
 
 .lista-insumos{
   display:flex;

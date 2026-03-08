@@ -124,9 +124,8 @@ function renderPacking(items) {
     items.forEach(item => {
         const cantidad = item.cantidad_por_paquete || 1;
 
-        const costoUnitario =
-            item.costo_unitario ??
-            (cantidad > 0 ? (item.precio_base / cantidad).toFixed(2) : 0);
+        // Cálculo de costo unitario con dos decimales
+        const costoUnitario = item.costo_unitario ?? calcularCostoUnitario(item.precio_base, cantidad);
 
         const card = document.createElement("div");
         card.classList.add("packing-item");
@@ -135,10 +134,10 @@ function renderPacking(items) {
             <div>
                 <strong>${item.nombre}</strong><br>
                 ${item.unidad_medida}<br>
-                Precio paquete: S/ ${parseFloat(item.precio_base).toFixed(2)}<br>
+                Precio paquete: S/ ${formatearMoneda(item.precio_base)}<br>
                 Contiene: ${cantidad} unidades<br>
                 <strong>
-                    Costo unitario: S/ ${costoUnitario}
+                    Costo unitario: S/ ${formatearMoneda(costoUnitario)}
                 </strong>
             </div>
 
@@ -167,6 +166,16 @@ function renderPacking(items) {
     document.querySelectorAll(".btn-edit").forEach(btn => {
         btn.addEventListener("click", () => editarPacking(btn.dataset.id));
     });
+}
+
+// 📊 CALCULAR COSTO UNITARIO
+function calcularCostoUnitario(precioBase, cantidad) {
+    return (cantidad > 0 ? (precioBase / cantidad).toFixed(2) : 0);
+}
+
+// 💲 FORMATEAR MONEDA
+function formatearMoneda(valor) {
+    return parseFloat(valor).toFixed(2); // Asegura que siempre tenga 2 decimales
 }
 
 // ✏ EDITAR
