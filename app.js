@@ -37,15 +37,13 @@ app.use('/api/intermedios', require('./routes/intermedio.routes'));
 app.use('/api/admin', require('./routes/admin.routes'));
 app.use('/api/packing', require('./routes/packing.routes'));
 app.use('/api/clientes', require('./routes/clientes.routes'));
-
 app.use('/api/notificaciones', require('./routes/notificaciones.routes'));
-
 app.use('/api/rentabilidad', require('./routes/rentabilidad.routes'));
 
-// 👇 CHAT
+app.use('/api/gastos', require('./routes/gastos.routes')); // 👈 NUEVA RUTA
+
 app.use('/api/chat', require('./routes/chat.routes'));
 app.use('/api/noticias', require('./routes/noticias.routes'));
-// Manejo de rutas no encontradas
 app.use((req, res) => {
     res.status(404).json({ error: "Ruta no encontrada" });
 });

@@ -3,10 +3,6 @@ const API_URL = "/api/rentabilidad";
 let chart = null;
 let carouselInterval = null;
 
-/* =========================
-INIT
-========================= */
-
 document.addEventListener("DOMContentLoaded", () => {
 
     if (!document.getElementById("ventasTotales")) return;
@@ -106,27 +102,31 @@ function mostrarKPIs(data) {
     const ventas = Number(data?.ventas_totales) || 0;
     const cantidad = Number(data?.cantidad_ventas) || 0;
     const ticket = Number(data?.ticket_promedio) || 0;
+    const gastos = Number(data?.gastos_totales) || 0;  // Obtener los gastos totales
 
+    // Mostrar KPIs de ventas y gastos
     document.getElementById("ventasTotales").textContent = formatearMoneda(ventas);
     document.getElementById("cantidadVentas").textContent = cantidad;
     document.getElementById("ticketPromedio").textContent = formatearMoneda(ticket);
+
+    // Calcular ganancia neta
+    const gananciaNeta = ventas - gastos;
+
+    // Mostrar la ganancia neta
+    document.getElementById("gananciaNeta").textContent = formatearMoneda(gananciaNeta);
+    document.getElementById("gastosTotales").textContent = formatearMoneda(gastos);
 
     const estado = document.getElementById("estadoRentabilidad");
 
     if (!estado) return;
 
     if (ventas > 0) {
-
-        estado.textContent = "Negocio Activo 📈";
+        estado.textContent = "Negocio Rentable";
         estado.style.color = "#2e7d32";
-
     } else {
-
         estado.textContent = "Sin ventas";
         estado.style.color = "#b71c1c";
-
     }
-
 }
 
 /* =========================

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rentabilidad</title>
-<meta name="theme-color" content="#8b5e3c">
-<link rel="stylesheet" href="css/rentabilidad.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rentabilidad</title>
+  <meta name="theme-color" content="#8b5e3c">
+  <link rel="stylesheet" href="css/rentabilidad.css">
 </head>
 
 <body>
@@ -26,6 +26,7 @@
         <li><a href="dashboard.html">Costear Producto Terminado</a></li>
         <li><a href="rentabilidad.html">Rentabilidad</a></li>
         <li><a href="clientes.html">Clientes</a></li>
+        <li><a href="gastos.html">Gastos</a></li>
         <li><a href="#" id="logoutBtn">Cerrar Sesión</a></li>
     </ul>
 </nav>
@@ -34,8 +35,8 @@
 
 <main class="content">
 
-<!-- FILTROS -->
-<section class="card filtros">
+  <!-- FILTROS -->
+  <section class="card filtros">
     <h2>Análisis de ventas</h2>
     <div class="filtro-grid">
         <div class="form-group">
@@ -48,10 +49,10 @@
         </div>
         <button id="btnFiltrar" class="btn-primary">Analizar</button>
     </div>
-</section>
+  </section>
 
-<!-- KPIs -->
-<section class="kpis">
+  <!-- KPIs -->
+  <section class="kpis">
     <div class="kpi-card">
         <p>Ventas Totales</p>
         <h3 id="ventasTotales">S/ 0</h3>
@@ -71,26 +72,39 @@
         <p>Estado del Negocio</p>
         <h3 id="estadoRentabilidad">-</h3>
     </div>
-</section>
 
-<!-- TOP CLIENTES -->
-<section class="top-clientes">
+    <!-- Gastos Totales -->
+    <div class="kpi-card">
+        <p>Gastos Totales</p>
+        <h3 id="gastosTotales">S/ 0</h3>
+    </div>
+
+    <!-- Ganancia Neta -->
+    <div class="kpi-card">
+        <p>Ganancia Neta</p>
+        <h3 id="gananciaNeta">S/ 0</h3>
+    </div>
+
+  </section>
+
+  <!-- TOP CLIENTES -->
+  <section class="top-clientes">
     <div class="section-header">
         <h2>Clientes que más compran</h2>
         <span class="sub">Top 3 del periodo</span>
     </div>
     <div class="carousel-container">
-    <div class="carousel-track" id="carouselClientes"></div>
-</div>
-</section>
+      <div class="carousel-track" id="carouselClientes"></div>
+    </div>
+  </section>
 
-<!-- GRAFICO -->
-<section class="card">
+  <!-- GRAFICO -->
+  <section class="card">
     <h2>Ventas del periodo</h2>
     <div class="chart-container">
         <canvas id="graficoVentas"></canvas>
     </div>
-</section>
+  </section>
 
 </main>
 

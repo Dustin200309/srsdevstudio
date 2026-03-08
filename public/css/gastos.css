@@ -1,0 +1,532 @@
+:root {
+  --marron: #8b5e3c;
+  --marron-oscuro: #865c3f;
+  --beige: #f1e3d3;
+  --beige-claro: #faf6f1;
+  --blanco: #ffffff;
+  --gris: #6f5f55;
+  --acento: #d4a373;
+  --verde: #4f772d;
+  --rojo: #b23a48;
+  --radius: 18px;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+/* ================= RESET ================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background: var(--beige-claro);
+  color: var(--gris);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* ================================
+HEADER
+================================ */
+
+.header{
+
+position:sticky;
+top:0;
+
+display:flex;
+align-items:center;
+gap:15px;
+
+padding:16px 22px;
+
+background:white;
+
+border-bottom:1px solid var(--border);
+
+z-index:10;
+
+}
+
+.header h1{
+
+font-size:20px;
+font-weight:600;
+
+}
+
+.menu-btn{
+width:30px;
+height:22px;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+background:none;
+border:none;
+cursor:pointer;
+padding:0;
+}
+
+.menu-btn span{
+display:block;
+height:3px;
+width:100%;
+background:var(--marron);
+border-radius:3px;
+transition:.3s;
+}
+
+.sidebar{
+
+position:fixed;
+
+top:0;
+left:-260px;
+
+width:240px;
+height:100%;
+
+background:white;
+
+border-right:1px solid var(--border);
+
+padding-top:70px;
+
+transition:.3s;
+
+z-index:20;
+
+}
+
+.sidebar.active{
+
+left:0;
+
+}
+
+.sidebar ul{
+
+list-style:none;
+
+}
+
+.sidebar li{
+
+border-bottom:1px solid var(--border);
+
+}
+
+.sidebar a{
+
+display:block;
+
+padding:14px 20px;
+
+text-decoration:none;
+
+color:var(--text);
+
+font-size:14px;
+
+transition:.2s;
+
+}
+
+.sidebar a:hover{
+
+background:#f6f2ee;
+
+}
+
+
+/* ================= OVERLAY ================= */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s;
+}
+
+.overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+
+/* ================= CONTENT ================= */
+.content {
+  padding: 30px;
+}
+
+@media (min-width: 900px) {
+  .content {
+    max-width: 1000px;
+    margin: 40px auto;
+  }
+}
+
+/* ================= CARD GENERAL ================= */
+.card {
+  background: var(--blanco);
+  padding: 30px;
+  margin-bottom: 30px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+/* ================= RESUMEN GASTOS ================= */
+.gastos-resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.resumen-card {
+  background: var(--blanco);
+  padding: 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  text-align: center;
+  transition: 0.3s ease;
+}
+
+.resumen-card h3 {
+  font-size: 20px;
+  color: var(--marron);
+  margin-top: 10px;
+}
+
+.resumen-card p {
+  color: var(--gris);
+  font-size: 14px;
+}
+
+.resumen-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* ================= GASTOS HISTORIAL ================= */
+.tabla {
+  margin-top: 30px;
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--blanco);
+}
+
+.tabla th,
+.tabla td {
+  padding: 12px 15px;
+  border-bottom: 1px solid var(--gris);
+  text-align: left;
+  font-size: 14px;
+}
+
+.tabla th {
+  background: var(--beige-claro);
+  font-weight: 600;
+}
+
+.tabla td {
+  background: var(--blanco);
+}
+
+.tabla tr:hover {
+  background: var(--beige);
+  cursor: pointer;
+}
+
+/* ================= BOTONES DE ACCIÓN ================= */
+button {
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  background: var(--marron);
+  color: white;
+  border-radius: var(--radius);
+  font-weight: 600;
+  transition: 0.25s ease;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+/* ==============================================
+RESPONSIVE STYLES (MOBILE & TABLET) 
+============================================= */
+
+/* Adjust Resumen Grid */
+@media (max-width: 768px) {
+  .gastos-resumen {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  /* Ajuste en el padding de la tabla */
+  .tabla th, .tabla td {
+    padding: 10px 8px;
+  }
+}
+
+/* Ensure buttons have adequate padding on small screens */
+@media (max-width: 600px) {
+  button {
+    padding: 12px 25px;
+    font-size: 14px;
+  }
+}
+/* ================= FORM ================= */
+label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 15px;
+  display: block;
+  color: var(--marron-oscuro);
+}
+
+input,
+select {
+  width: 100%;
+  padding: 14px;
+  margin-top: 6px;
+  border-radius: 14px;
+  border: 1px solid var(--acento);
+  background: var(--beige-claro);
+  transition: 0.2s ease;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--marron);
+  box-shadow: 0 0 0 3px rgba(139, 94, 60, 0.15);
+  outline: none;
+}
+
+/* ================= BOTONES PRINCIPALES ================= */
+.btn-group {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  transition: 0.25s ease;
+  font-weight: 600;
+}
+
+.btn-primary {
+  flex: 1;
+  background: linear-gradient(135deg, var(--marron), var(--marron-oscuro));
+  color: white;
+  padding: 14px;
+  border-radius: 50px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  flex: 1;
+  background: var(--acento);
+  padding: 14px;
+  border-radius: 50px;
+  color: white;
+}
+
+.btn-secondary:hover {
+  opacity: 0.85;
+}
+
+/* ================= SEARCH ================= */
+.search-input {
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid var(--acento);
+  background: var(--beige);
+}
+
+/* ================= LISTA INSUMOS ================= */
+.lista-insumos {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ================= CARD INSUMO ================= */
+.card-insumo {
+  background: var(--beige);
+  padding: 22px;
+  border-radius: var(--radius);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: 0.3s ease;
+  border: 1px solid transparent;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+}
+
+.card-insumo:hover {
+  background: #f7efe7;
+  border-color: var(--acento);
+  transform: translateY(-3px);
+}
+
+.insumo-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.insumo-info strong {
+  font-size: 17px;
+  color: var(--marron-oscuro);
+}
+
+.insumo-info small {
+  font-size: 14px;
+  color: var(--gris);
+}
+
+/* ================= BOTONES GRANDES ================= */
+.insumo-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-action {
+  padding: 12px 18px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: 0.25s ease;
+}
+
+/* EDITAR */
+.btn-edit {
+  background: linear-gradient(135deg, var(--acento), var(--marron));
+  color: white;
+  box-shadow: 0 6px 18px rgba(139, 94, 60, 0.25);
+}
+
+.btn-edit:hover {
+  transform: translateY(-3px);
+}
+
+/* ELIMINAR */
+.btn-delete {
+  background: linear-gradient(135deg, var(--rojo), #8f1d2c);
+  color: white;
+  box-shadow: 0 6px 18px rgba(178, 58, 72, 0.3);
+}
+
+.btn-delete:hover {
+  transform: translateY(-3px);
+}
+
+.btn-action:active {
+  transform: scale(0.96);
+}
+
+/* ================= BADGE ================= */
+.badge {
+  background: var(--marron);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ================= TOAST ================= */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--marron);
+  color: white;
+  padding: 14px 25px;
+  border-radius: 50px;
+  opacity: 0;
+  transition: 0.3s ease;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  z-index: 2000;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ================= MODAL ================= */
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--blanco);
+  padding: 25px 30px;
+  border-radius: 14px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  display: none;
+  z-index: 999;
+  width: 90%;
+  max-width: 420px;
+}
+
+.modal.active {
+  display: block;
+}
+
+.modal button {
+  padding: 12px 24px;
+  border-radius: 50px;
+  margin-top: 15px;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 600px) {
+
+  .card-insumo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .insumo-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .btn-icon {
+    flex: 1;
+    height: 50px;
+    font-size: 18px;
+  }
+
+  .btn-group {
+    flex-direction: column;
+  }
+}
