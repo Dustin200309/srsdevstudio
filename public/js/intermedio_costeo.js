@@ -1,8 +1,25 @@
 let insumosReceta = [];
 let totalMateriales = 0;
+function mostrarToast(mensaje, tipo = "success") {
 
+    const toast = document.getElementById("toastSuccess");
+
+    if (!toast) return;
+
+    toast.innerHTML = `
+        <span class="icon">${tipo === "success" ? "✔" : "⚠"}</span>
+        <span>${mensaje}</span>
+    `;
+
+    toast.className = `toast show ${tipo}`;
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2000);
+
+}
 document.addEventListener("DOMContentLoaded", () => {
-
+    
     const tabla = document.getElementById("tablaInsumos");
     const totalMaterialesSpan = document.getElementById("totalMateriales");
     const costoManoObraSpan = document.getElementById("costoManoObra");
@@ -73,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const mensajeError = validarCampos(select, cantidad);
         if (mensajeError) {
-            alert(mensajeError);
+            mostrarToast(mensajeError, "error");
             return;
         }
 
@@ -171,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const manoObra = parseFloat(manoObraInput?.value);
 
         if (!nombre || insumosReceta.length === 0) {
-            alert("Complete todos los datos");
+            mostrarToast("Complete todos los datos", "error");
             return;
         }
 
@@ -190,8 +207,11 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(res => res.json())
         .then(() => {
-            alert("Intermedio guardado correctamente");
-            location.reload();
+            mostrarToast("Intermedio guardado correctamente", "success");
+
+            setTimeout(()=>{
+             location.reload();
+            },1500);
         })
         .catch(error => {
             console.error("Error guardando intermedio:", error);

@@ -75,7 +75,7 @@
                 <option value="l">Litro (l)</option>
             </select>
 
-            <input type="number" id="cantidadInsumo" placeholder="Cantidad usada">
+            <input type="number" id="cantidadInsumo" placeholder="Cantidad usada" step="0.01">
 
             <button type="button" id="btnAgregar" class="btn-principal">
                 Agregar
@@ -136,6 +136,11 @@
 
 <script src="js/menu.js"></script>
 <script src="js/intermedio_costeo.js"></script>
+
+<div id="toastSuccess" class="toast-success">
+  <span class="icon">✔</span>
+  <span id="toastMessage">Guardado correctamente</span>
+</div>
 
 </body>
 </html>

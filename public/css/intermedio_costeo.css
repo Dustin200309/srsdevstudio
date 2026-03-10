@@ -8,9 +8,12 @@
   --acento:#d4a373;
   --verde:#4f772d;
   --rojo:#b23a48;
+
   --radius:14px;
   --shadow:0 10px 30px rgba(0,0,0,0.05);
 }
+
+/* ================= RESET ================= */
 
 *{
   margin:0;
@@ -24,19 +27,20 @@ body{
   min-height:100vh;
   color:var(--gris);
 }
-/* ================================
-HEADER
-================================ */
+
+/* ================= HEADER ================= */
 
 .header{
   position:sticky;
   top:0;
+
   display:flex;
   align-items:center;
   gap:15px;
+
   padding:16px 22px;
 
-  background:#ffffff;        /* blanco */
+  background:white;
   border-bottom:1px solid #e5e5e5;
 
   z-index:10;
@@ -45,7 +49,7 @@ HEADER
 .header h1{
   font-size:20px;
   font-weight:600;
-  color:#555;               /* gris */
+  color:#555;
 }
 
 .menu-btn{
@@ -76,21 +80,22 @@ HEADER
 .menu-btn:active{
   transform:scale(0.96);
 }
-/* ================================
-SIDEBAR
-================================ */
+
+/* ================= SIDEBAR ================= */
 
 .sidebar{
   position:fixed;
   top:0;
   left:-260px;
+
   width:240px;
   height:100%;
 
-  background:#ffffff;
+  background:white;
   border-right:1px solid #e5e5e5;
 
   padding-top:70px;
+
   transition:.3s;
   z-index:20;
 }
@@ -110,9 +115,11 @@ SIDEBAR
 .sidebar a{
   display:block;
   padding:14px 20px;
+
   text-decoration:none;
   color:#555;
   font-size:14px;
+
   transition:.2s;
 }
 
@@ -120,17 +127,17 @@ SIDEBAR
   background:#f5f5f5;
 }
 
-/* ================================
-OVERLAY
-================================ */
+/* ================= OVERLAY ================= */
 
 #overlay{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.2); /* sombra muy ligera */
+
+  background:rgba(0,0,0,0.2);
+
   opacity:0;
   pointer-events:none;
-  transition:0.3s;
+  transition:.3s;
 }
 
 #overlay.active{
@@ -138,15 +145,18 @@ OVERLAY
   pointer-events:auto;
 }
 
+/* ================= LAYOUT ================= */
+
 .content{
   margin-top:5px;
   margin-left:260px;
+
   padding:35px;
   max-width:1300px;
 }
 
 section{
-  background:var(--blanco);
+  background:white;
   padding:25px;
   border-radius:var(--radius);
   box-shadow:var(--shadow);
@@ -159,20 +169,25 @@ section h2{
   font-size:18px;
 }
 
+/* ================= SELECT ================= */
+
 select{
   width:100%;
-  padding:12px 40px 12px 14px;
+
+  padding:12px 45px 12px 14px;
+
   border-radius:12px;
   border:1px solid #e2d8cf;
+
   background:var(--beige-claro);
+
   font-size:14px;
   color:var(--gris);
+
   cursor:pointer;
-  transition:0.25s ease;
+  transition:.25s ease;
 
   appearance:none;
-  -webkit-appearance:none;
-  -moz-appearance:none;
 
   background-image:url("data:image/svg+xml;utf8,<svg fill='%235c3a21' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
   background-repeat:no-repeat;
@@ -191,18 +206,23 @@ select:focus{
   box-shadow:0 0 0 3px rgba(139,94,60,0.15);
 }
 
-/* ================= INPUTS ================= */
+/* ================= INPUT ================= */
 
 input{
   width:100%;
+
   padding:11px 14px;
+
   border-radius:10px;
   border:1px solid #e2d8cf;
+
   margin-top:6px;
   margin-bottom:15px;
+
   font-size:14px;
+
   background:var(--beige-claro);
-  transition:0.2s;
+  transition:.2s;
 }
 
 input:focus{
@@ -212,17 +232,20 @@ input:focus{
   box-shadow:0 0 0 2px rgba(139,94,60,0.15);
 }
 
-/* ================= BUTTONS ================= */
+/* ================= BUTTON ================= */
 
 button{
   background:var(--marron);
   color:white;
+
   border:none;
   padding:10px 20px;
+
   border-radius:10px;
   cursor:pointer;
+
   font-weight:500;
-  transition:0.25s;
+  transition:.25s;
 }
 
 button:hover{
@@ -232,10 +255,15 @@ button:hover{
 
 /* ================= TABLE ================= */
 
+.tabla-wrapper{
+  overflow-x:auto;
+}
+
 table{
   width:100%;
   border-collapse:collapse;
   margin-top:15px;
+
   background:white;
   border-radius:12px;
   overflow:hidden;
@@ -255,6 +283,8 @@ td{
   padding:11px;
   border-bottom:1px solid #f0e6da;
   text-align:center;
+
+  font-variant-numeric:tabular-nums;
 }
 
 tbody tr:hover{
@@ -263,159 +293,10 @@ tbody tr:hover{
 
 /* ================= RESUMEN ================= */
 
-.card-resumen{
-  padding:35px;
-  border-radius:var(--radius);
-  background:linear-gradient(145deg,#ffffff,#f7f2ec);
-  box-shadow:var(--shadow);
-}
-
-.resumen-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:15px;
-}
-
-.resumen-item{
-  padding:14px 16px;
-  border-radius:12px;
-  background:var(--beige-claro);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:14px;
-}
-
-.resumen-item strong{
-  font-size:15px;
-}
-
-.resumen-item.total{
-  background:#f3e7dc;
-  font-weight:600;
-}
-
-.resumen-item.precio{
-  background:#efe2d6;
-  font-size:18px;
-  font-weight:bold;
-  color:var(--marron-oscuro);
-}
-
-.resumen-item.ganancia{
-  background:#eaf4e4;
-  color:var(--verde);
-  font-weight:600;
-}
-
-/* ================= BOTÓN GUARDAR ================= */
-
-.btn-guardar-circle{
-  margin-top:30px;
-  width:100%;
-  padding:15px;
-  border-radius:40px;
-  font-size:15px;
-  font-weight:600;
-}
-
-.btn-guardar-circle:hover{
-  transform:translateY(-3px);
-}
-
-/* ================= SWITCH ================= */
-
-.switch{
-  position:relative;
-  display:inline-block;
-  width:46px;
-  height:24px;
-}
-
-.switch input{
-  opacity:0;
-  width:0;
-  height:0;
-}
-
-.slider{
-  position:absolute;
-  inset:0;
-  background:#ccc;
-  border-radius:34px;
-  transition:.3s;
-}
-
-.slider:before{
-  content:"";
-  position:absolute;
-  height:18px;
-  width:18px;
-  left:3px;
-  bottom:3px;
-  background:white;
-  border-radius:50%;
-  transition:.3s;
-}
-
-.switch input:checked + .slider{
-  background:var(--marron);
-}
-
-.switch input:checked + .slider:before{
-  transform:translateX(22px);
-}
-
-/* ================= MODAL ================= */
-
-.modal-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.4);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  opacity:0;
-  pointer-events:none;
-  transition:0.3s ease;
-  z-index:2000;
-}
-
-.modal-overlay.active{
-  opacity:1;
-  pointer-events:auto;
-}
-
-.modal-box{
-  background:white;
-  padding:30px;
-  width:90%;
-  max-width:400px;
-  border-radius:var(--radius);
-  box-shadow:0 20px 45px rgba(0,0,0,0.15);
-  animation:fadeUp 0.3s ease;
-}
-
-.modal-buttons{
-  display:flex;
-  justify-content:flex-end;
-  gap:12px;
-}
-/* ================= BLOQUE MANO DE OBRA ================= */
-
-.card-mano-obra{
-  margin-top:15px;
-}
-
-.card-mano-obra h3{
-  margin-bottom:10px;
-}
-
-/* ================= RESUMEN DE COSTOS ================= */
-
 .resumen-costos{
   margin-top:20px;
   padding:18px 20px;
+
   background:var(--beige-claro);
   border-radius:12px;
   border:1px solid #eaded2;
@@ -431,8 +312,11 @@ tbody tr:hover{
 .total-general{
   margin-top:18px;
   padding:22px;
+
   border-radius:14px;
+
   background:linear-gradient(145deg,#f7efe6,#efe2d6);
+
   text-align:center;
 }
 
@@ -455,8 +339,6 @@ tbody tr:hover{
   margin-bottom:15px;
 }
 
-/* ================= BOTÓN FINAL ================= */
-
 .total-general .btn-guardar{
   width:100%;
   padding:13px;
@@ -464,9 +346,74 @@ tbody tr:hover{
   font-size:15px;
   font-weight:600;
 }
+
+/* ================= TOAST ================= */
+
+.toast-success{
+  position:fixed;
+
+  top:25px;
+  right:25px;
+
+  background:#1f7a3f;
+  color:white;
+
+  padding:12px 16px;
+
+  border-radius:8px;
+
+  display:flex;
+  align-items:center;
+  gap:10px;
+
+  font-weight:600;
+
+  box-shadow:0 8px 20px rgba(0,0,0,0.2);
+
+  opacity:0;
+  transform:translateY(-10px);
+
+  pointer-events:none;
+  transition:.25s ease;
+
+  z-index:9999;
+}
+
+.toast-success.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.toast-success.error{
+  background:var(--rojo);
+}
+
+.toast-success .icon{
+  background:#2ecc71;
+
+  width:22px;
+  height:22px;
+
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:14px;
+}
+
+/* ================= ANIMATION ================= */
+
 @keyframes fadeUp{
-  from{ transform:translateY(10px); opacity:0; }
-  to{ transform:translateY(0); opacity:1; }
+  from{
+    transform:translateY(10px);
+    opacity:0;
+  }
+  to{
+    transform:translateY(0);
+    opacity:1;
+  }
 }
 
 /* ================= RESPONSIVE ================= */
