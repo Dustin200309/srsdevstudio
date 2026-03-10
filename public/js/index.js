@@ -4,10 +4,22 @@ if (!token) {
     window.location.href = "/login";
 }
 
-// Variables
+/* ===============================
+VARIABLES
+=============================== */
+
 let insumosReceta = [];
 let intermediosReceta = [];
 let packingReceta = [];
+
+let listaInsumos = [];
+let listaIntermedios = [];
+let listaPacking = [];
+
+let insumoSeleccionado = null;
+let intermedioSeleccionado = null;
+let packingSeleccionado = null;
+
 let totalBase = 0;
 let totalManoObra = 0;
 let totalIndirectos = 0;
@@ -17,460 +29,433 @@ let precioUnidad = 0;
 let ganancia = 0;
 let margenReal = 0;
 
-document.addEventListener("DOMContentLoaded", () => {
-    cargarDatos("/api/insumos", "insumoSelect", ["precio", "unidad"]);
-    cargarDatos("/api/intermedios", "selectIntermedio", ["costo_unitario"]);
-    cargarDatos("/api/packing", "selectPacking", ["costo_unitario"]);
+/* ===============================
+INICIO
+=============================== */
 
-    // Botones
-    const btnAgregar = document.getElementById("btnAgregar");
-    if (btnAgregar) btnAgregar.addEventListener("click", agregarInsumo);
+document.addEventListener("DOMContentLoaded", async () => {
 
-    const btnAgregarIntermedio = document.getElementById("btnAgregarIntermedio");
-    if (btnAgregarIntermedio) btnAgregarIntermedio.addEventListener("click", agregarIntermedio);
+    await cargarDatos("/api/insumos", "insumos");
+    await cargarDatos("/api/intermedios", "intermedios");
+    await cargarDatos("/api/packing", "packing");
 
-    const btnAgregarPacking = document.getElementById("btnAgregarPacking");
-    if (btnAgregarPacking) {
-        btnAgregarPacking.addEventListener("click", agregarPacking);
-    }
+    configurarBuscadores();
 
-    const btnGuardar = document.getElementById("btnGuardar");
-    if (btnGuardar) btnGuardar.addEventListener("click", guardarReceta);
+    document.getElementById("btnAgregar")?.addEventListener("click", agregarInsumo);
+    document.getElementById("btnAgregarIntermedio")?.addEventListener("click", agregarIntermedio);
+    document.getElementById("btnAgregarPacking")?.addEventListener("click", agregarPacking);
 
-    // Inputs automáticos
+    document.getElementById("btnGuardar")?.addEventListener("click", guardarReceta);
+
     [
         "cantidadProducida",
         "manoObraPorcentaje",
         "indirectoValor",
         "margenGanancia"
-    ].forEach(id => {
-        const elemento = document.getElementById(id);
-        if (elemento) {
-            elemento.addEventListener("input", recalcularTotales);
-        }
+    ].forEach(id=>{
+        document.getElementById(id)?.addEventListener("input", recalcularTotales);
     });
 
-    // Checkbox IGV
-    const incluirIGV = document.getElementById("incluirIGV");
-    if (incluirIGV) {
-        incluirIGV.addEventListener("change", recalcularTotales);
-    }
+    document.getElementById("incluirIGV")?.addEventListener("change", recalcularTotales);
+
 });
 
-// ===============================
-//  CARGAR DATOS
-// ===============================
-async function cargarDatos(apiUrl, selectId, dataAttributes) {
-    const select = document.getElementById(selectId);
-    if (!select) return;
 
-    try {
-        const response = await fetch(apiUrl, {
-            headers: { "Authorization": "Bearer " + token }
+/* ===============================
+CARGAR DATOS
+=============================== */
+
+async function cargarDatos(apiUrl, tipo){
+
+    try{
+
+        const response = await fetch(apiUrl,{
+            headers:{Authorization:"Bearer "+token}
         });
 
         const data = await response.json();
 
-        select.innerHTML = `<option value="">Seleccione una opción</option>`;
+        if(tipo==="insumos") listaInsumos = data;
+        if(tipo==="intermedios") listaIntermedios = data;
+        if(tipo==="packing") listaPacking = data;
 
-        data.forEach(item => {
-            let optionHTML = `<option value="${item.id}"`;
-            dataAttributes.forEach(attr => {
-                optionHTML += ` data-${attr}="${item[attr]}"`;
-            });
-            optionHTML += `>${item.nombre}</option>`;
-            select.innerHTML += optionHTML;
+    }catch(error){
+        console.error("Error cargando datos:",error);
+    }
+
+}
+
+
+/* ===============================
+BUSCADORES
+=============================== */
+
+function configurarBuscadores(){
+
+    crearBuscador("buscarInsumo","resultadosInsumo",listaInsumos,item=>insumoSeleccionado=item);
+    crearBuscador("buscarIntermedio","resultadosIntermedio",listaIntermedios,item=>intermedioSeleccionado=item);
+    crearBuscador("buscarPacking","resultadosPacking",listaPacking,item=>packingSeleccionado=item);
+
+}
+
+function crearBuscador(inputId,listaId,data,onSelect){
+
+    const input=document.getElementById(inputId);
+    const lista=document.getElementById(listaId);
+
+    if(!input || !lista) return;
+
+    input.addEventListener("input",()=>{
+
+        const texto=input.value.toLowerCase();
+
+        lista.innerHTML="";
+
+        if(texto.length===0){
+            lista.style.display="none";
+            return;
+        }
+
+        const resultados=data
+        .filter(i=>i.nombre.toLowerCase().includes(texto))
+        .slice(0,10);
+
+        resultados.forEach(item=>{
+
+            const div=document.createElement("div");
+            div.className="resultado-item";
+            div.textContent=item.nombre;
+
+            div.onclick=()=>{
+
+                onSelect(item);
+                input.value=item.nombre;
+                lista.style.display="none";
+
+            };
+
+            lista.appendChild(div);
+
         });
 
-    } catch (error) {
-        console.error("Error cargando datos:", error);
-    }
+        lista.style.display="block";
+
+    });
+
 }
 
-// ===============================
-//  VALIDACIÓN
-// ===============================
-function validarCampos(select, cantidad) {
-    if (!select.value || isNaN(cantidad) || cantidad <= 0) {
-        return "Seleccione una opción válida y asegúrese de que la cantidad sea un número positivo.";
-    }
-    return null;
-}
 
-function showAlert(message) {
-    alert(message);
-}
+/* ===============================
+AGREGAR INSUMO
+=============================== */
+function agregarInsumo(){
 
-// ===============================
-// ➕ AGREGAR INSUMO
-// ===============================
-
-function agregarInsumo() {
-    const select = document.getElementById("insumoSelect");
-    const cantidad = parseFloat(document.getElementById("cantidadUsada")?.value);
-    const unidad = document.getElementById("unidadSelect").value;  // Obtener la unidad seleccionada
-
-    const mensajeError = validarCampos(select, cantidad);
-    if (mensajeError) {
-        showAlert(mensajeError);
+    if(!insumoSeleccionado){
+        alert("Seleccione un insumo");
         return;
     }
 
-    const option = select.options[select.selectedIndex];
-    const precio = parseFloat(option.getAttribute("data-precio"));
+    const cantidad = parseFloat(document.getElementById("cantidadUsada").value);
+    const unidad = document.getElementById("unidadSelect").value;
 
-    if (isNaN(precio)) {
-        showAlert("Precio del insumo no válido");
+    if(isNaN(cantidad) || cantidad <= 0){
+        alert("Cantidad inválida");
         return;
     }
 
-    let cantidadBase = cantidad;
+    const precio = parseFloat(insumoSeleccionado.precio);
+
+    if(isNaN(precio)){
+        alert("Precio del insumo no válido");
+        return;
+    }
+
     let precioFinal = precio;
+    let cantidadBase = cantidad;
 
-    // Convertir el precio según la unidad seleccionada
-    if (unidad === "kg") {
-        // Si la unidad es kg, mantenemos el precio tal cual
-        cantidadBase = cantidad;
-    } else if (unidad === "g") {
-        // Si la unidad es gramos, convertimos el precio por kg a precio por gramo
-        precioFinal = precio / 1000; // Precio por gramo
-        cantidadBase = cantidad;    // Mantenemos la cantidad en gramos
-    } else if (unidad === "l") {
-        // Si la unidad es litro, mantenemos el precio por litro
-        cantidadBase = cantidad;
-    } else if (unidad === "ml") {
-        // Si la unidad es mililitros, convertimos el precio por litro a precio por mililitro
-        precioFinal = precio / 1000; // Precio por mililitro
-        cantidadBase = cantidad;    // Mantenemos la cantidad en mililitros
+    // Conversión de unidades
+    if(unidad === "g"){
+        precioFinal = precio / 1000;
     }
 
-    // Calcular el costo de acuerdo con la cantidad en la unidad base
+    if(unidad === "ml"){
+        precioFinal = precio / 1000;
+    }
+
+    if(unidad === "kg"){
+        precioFinal = precio;
+    }
+
+    if(unidad === "l"){
+        precioFinal = precio;
+    }
+
     const costo = precioFinal * cantidadBase;
 
-    const existente = insumosReceta.find(i => i.insumo_id === parseInt(select.value));
-
-    if (existente) {
-        existente.cantidad += cantidadBase;  // Actualizar la cantidad base
-        existente.costo += costo;
-    } else {
-        insumosReceta.push({
-            tipo: "insumo",
-            insumo_id: parseInt(select.value),
-            nombre: option.text,
-            unidad,
-            cantidad: cantidadBase,
-            costo
-        });
-    }
+    insumosReceta.push({
+        tipo: "insumo",
+        insumo_id: insumoSeleccionado.id,
+        nombre: insumoSeleccionado.nombre,
+        unidad,
+        cantidad: cantidadBase,
+        costo
+    });
 
     recalcularTotales();
     renderTabla();
+    document.getElementById("buscarInsumo").value = "";
+    document.getElementById("cantidadUsada").value = "";
+    insumoSeleccionado = null;
 }
 
-// ===============================
-// ➕ AGREGAR INTERMEDIO
-// ===============================
-function agregarIntermedio() {
-    const select = document.getElementById("selectIntermedio");
-    const cantidad = parseFloat(document.getElementById("cantidadIntermedio")?.value);
+/* ===============================
+AGREGAR INTERMEDIO
+=============================== */
 
-    if (!select.value || isNaN(cantidad) || cantidad <= 0) {
-        showAlert("Seleccione intermedio y cantidad válida");
+function agregarIntermedio(){
+
+    if(!intermedioSeleccionado){
+        alert("Seleccione un intermedio");
         return;
     }
 
-    const option = select.options[select.selectedIndex];
-    const costoUnitario = parseFloat(option.getAttribute("data-costo_unitario"));
+    const cantidad=parseFloat(document.getElementById("cantidadIntermedio").value);
 
-    if (isNaN(costoUnitario)) {
-        showAlert("Costo del intermedio no válido");
+    if(isNaN(cantidad) || cantidad<=0){
+        alert("Cantidad inválida");
         return;
     }
 
-    const costo = costoUnitario * cantidad;
+    const costo=intermedioSeleccionado.costo_unitario*cantidad;
 
-    const existente = intermediosReceta.find(i => i.intermedio_id === parseInt(select.value));
-
-    if (existente) {
-        existente.cantidad += cantidad;
-        existente.costo += costo;
-    } else {
-        intermediosReceta.push({
-            tipo: "intermedio",
-            intermedio_id: parseInt(select.value),
-            nombre: option.text,
-            cantidad,
-            costo
-        });
-    }
+    intermediosReceta.push({
+        tipo:"intermedio",
+        intermedio_id:intermedioSeleccionado.id,
+        nombre:intermedioSeleccionado.nombre,
+        cantidad,
+        costo
+    });
 
     recalcularTotales();
     renderTabla();
+
 }
 
-//  AGREGAR PACKING
-function agregarPacking() {
-    const select = document.getElementById("selectPacking");
-    const cantidad = parseFloat(document.getElementById("cantidadPackingUsado")?.value);
 
-    if (!select.value || isNaN(cantidad) || cantidad <= 0) {
-        showAlert("Seleccione packing y cantidad válida");
+/* ===============================
+AGREGAR PACKING
+=============================== */
+
+function agregarPacking(){
+
+    if(!packingSeleccionado){
+        alert("Seleccione packing");
         return;
     }
 
-    const option = select.options[select.selectedIndex];
-    const costoUnitario = parseFloat(option.getAttribute("data-costo_unitario"));
+    const cantidad=parseFloat(document.getElementById("cantidadPackingUsado").value);
 
-    if (isNaN(costoUnitario)) {
-        showAlert("Costo unitario no válido");
+    if(isNaN(cantidad) || cantidad<=0){
+        alert("Cantidad inválida");
         return;
     }
 
-    const costo = costoUnitario * cantidad;
+    const costo=packingSeleccionado.costo_unitario*cantidad;
 
-    const existente = packingReceta.find(p => p.packing_id === parseInt(select.value));
-
-    if (existente) {
-        existente.cantidad += cantidad;
-        existente.costo += costo;
-    } else {
-        packingReceta.push({
-            tipo: "packing",
-            packing_id: parseInt(select.value),
-            nombre: option.text,
-            cantidad,
-            costo
-        });
-    }
+    packingReceta.push({
+        tipo:"packing",
+        packing_id:packingSeleccionado.id,
+        nombre:packingSeleccionado.nombre,
+        cantidad,
+        costo
+    });
 
     recalcularTotales();
     renderTabla();
+
 }
 
-// ===============================
-// 🖥 RENDER TABLA
-// ===============================
-function renderTabla() {
-    const tabla = document.getElementById("tablaInsumos");
-    if (!tabla) return;
 
-    tabla.innerHTML = "";
+/* ===============================
+RENDER TABLA
+=============================== */
 
-    totalBase = 0;
+function renderTabla(){
 
-    const items = [...insumosReceta, ...intermediosReceta, ...packingReceta];
+    const tabla=document.getElementById("tablaInsumos");
 
-    items.forEach((item, index) => {
-        totalBase += item.costo;
+    tabla.innerHTML="";
 
-        const row = document.createElement("tr");
+    totalBase=0;
 
-        row.innerHTML = `
-            <td>${item.nombre}</td>
-            <td>${item.cantidad} ${item.unidad ? item.unidad : ""}</td>
-            <td>S/ ${item.costo.toFixed(2)}</td>
-            <td><button class="btnEliminar" data-index="${index}">X</button></td>
+    const items=[...insumosReceta,...intermediosReceta,...packingReceta];
+
+    items.forEach((item,index)=>{
+
+        totalBase+=item.costo;
+
+        const row=document.createElement("tr");
+
+        row.innerHTML=`
+        <td>${item.nombre}</td>
+        <td>${item.cantidad}</td>
+        <td>S/ ${item.costo.toFixed(2)}</td>
+        <td><button class="btnEliminar" data-index="${index}">X</button></td>
         `;
 
         tabla.appendChild(row);
+
     });
 
-    document.querySelectorAll(".btnEliminar").forEach(btn => {
-        btn.addEventListener("click", function () {
-            if (!confirm("¿Eliminar este item?")) return;
+    document.querySelectorAll(".btnEliminar").forEach(btn=>{
 
-            const index = parseInt(this.getAttribute("data-index"));
+        btn.addEventListener("click",function(){
 
-            const totalInsumos = insumosReceta.length;
-            const totalIntermedios = intermediosReceta.length;
+            const index=parseInt(this.dataset.index);
 
-            if (index < totalInsumos) {
-                // Es insumo
-                insumosReceta.splice(index, 1);
-            } else if (index < totalInsumos + totalIntermedios) {
-                // Es intermedio
-                intermediosReceta.splice(index - totalInsumos, 1);
-            } else {
-                // Es packing
-                packingReceta.splice(index - totalInsumos - totalIntermedios, 1);
+            const totalInsumos=insumosReceta.length;
+            const totalIntermedios=intermediosReceta.length;
+
+            if(index<totalInsumos){
+
+                insumosReceta.splice(index,1);
+
+            }else if(index<totalInsumos+totalIntermedios){
+
+                intermediosReceta.splice(index-totalInsumos,1);
+
+            }else{
+
+                packingReceta.splice(index-totalInsumos-totalIntermedios,1);
+
             }
 
             recalcularTotales();
             renderTabla();
+
         });
+
     });
 
-    const totalEl = document.getElementById("totalInsumos");
-    if (totalEl) totalEl.innerText = totalBase.toFixed(2);
+    document.getElementById("totalInsumos").innerText=totalBase.toFixed(2);
+
 }
 
-// ===============================
-// 💰 CALCULAR TOTALES
-// ===============================
-function formatCurrency(valor) {
-    return valor.toFixed(2);
-}
 
-function recalcularTotales() {
-    const cantidadProducida = parseFloat(document.getElementById("cantidadProducida")?.value) || 1;
-    const porcentajeMO = parseFloat(document.getElementById("manoObraPorcentaje")?.value) || 0;
-    const porcentajeIndirectos = parseFloat(document.getElementById("indirectoValor")?.value) || 0;
-    const margenDeseado = parseFloat(document.getElementById("margenGanancia")?.value) || 0;
-    const incluirIGV = document.getElementById("incluirIGV")?.checked || false;
+/* ===============================
+CALCULAR TOTALES
+=============================== */
 
-    const costoMateriales = totalBase;
-    totalManoObra = (costoMateriales * porcentajeMO) / 100;
-    const baseProductiva = costoMateriales + totalManoObra;
-    totalIndirectos = (baseProductiva * porcentajeIndirectos) / 100;
-    const subtotalProduccion = baseProductiva + totalIndirectos;
-    const igv = incluirIGV ? subtotalProduccion * 0.18 : 0;
+function recalcularTotales(){
 
-    costoTotal = subtotalProduccion + igv;
-    precioVenta = costoTotal * (1 + margenDeseado / 100);
-    ganancia = precioVenta - costoTotal;
-    margenReal = precioVenta > 0 ? (ganancia / precioVenta) * 100 : 0;
-    precioUnidad = precioVenta / cantidadProducida;
+    const cantidadProducida=parseFloat(document.getElementById("cantidadProducida").value)||1;
+    const porcentajeMO=parseFloat(document.getElementById("manoObraPorcentaje").value)||0;
+    const porcentajeIndirectos=parseFloat(document.getElementById("indirectoValor").value)||0;
+    const margenDeseado=parseFloat(document.getElementById("margenGanancia").value)||0;
+    const incluirIGV=document.getElementById("incluirIGV").checked;
 
-    const setText = (id, value) => {
-        const el = document.getElementById(id);
-        if (el) el.innerText = value;
+    const costoMateriales=totalBase;
+
+    totalManoObra=(costoMateriales*porcentajeMO)/100;
+
+    const baseProductiva=costoMateriales+totalManoObra;
+
+    totalIndirectos=(baseProductiva*porcentajeIndirectos)/100;
+
+    const subtotalProduccion=baseProductiva+totalIndirectos;
+
+    const igv=incluirIGV?subtotalProduccion*0.18:0;
+
+    costoTotal=subtotalProduccion+igv;
+
+    precioVenta=costoTotal*(1+margenDeseado/100);
+
+    ganancia=precioVenta-costoTotal;
+
+    margenReal=precioVenta>0?(ganancia/precioVenta)*100:0;
+
+    precioUnidad=precioVenta/cantidadProducida;
+
+    const setText=(id,value)=>{
+        document.getElementById(id).innerText=value.toFixed(2);
     };
 
-    setText("totalManoObra", formatCurrency(totalManoObra));
-    setText("totalIndirectos", formatCurrency(totalIndirectos));
-    setText("subtotal", formatCurrency(subtotalProduccion));
-    setText("igv", formatCurrency(igv));
-    setText("costoTotal", formatCurrency(costoTotal));
-    setText("precioVenta", formatCurrency(precioVenta));
-    setText("ganancia", formatCurrency(ganancia));
-    setText("precioUnidad", formatCurrency(precioUnidad));
+    setText("totalManoObra",totalManoObra);
+    setText("totalIndirectos",totalIndirectos);
+    setText("subtotal",subtotalProduccion);
+    setText("igv",igv);
+    setText("costoTotal",costoTotal);
+    setText("precioVenta",precioVenta);
+    setText("ganancia",ganancia);
+    setText("precioUnidad",precioUnidad);
 
-    const margenElemento = document.getElementById("margenReal");
-    if (margenElemento) {
-        margenElemento.innerText = `${margenReal.toFixed(2)} %`;
-        margenElemento.style.color =
-            margenReal < 20 ? "red" :
-            margenReal < 30 ? "orange" : "green";
-    }
+    document.getElementById("margenReal").innerText=margenReal.toFixed(2)+" %";
+
 }
 
-// ===============================
-// 💾 GUARDAR RECETA
-// ===============================
-function guardarReceta() {
-    const nombre = document.getElementById("nombreProducto").value.trim();
-    const cantidad_producida = parseFloat(document.getElementById("cantidadProducida").value);
-    const subtotal = parseFloat(document.getElementById("subtotal").textContent);
-    const costoTotal = parseFloat(document.getElementById("costoTotal").textContent);
-    const precioVenta = parseFloat(document.getElementById("precioVenta").textContent);
 
-    // Validaciones generales
-    if (!nombre || cantidad_producida <= 0) {
-        showAlert("Ingrese nombre del producto y cantidad válida.");
+/* ===============================
+GUARDAR RECETA
+=============================== */
+
+function guardarReceta(){
+
+    const nombre=document.getElementById("nombreProducto").value.trim();
+
+    if(!nombre){
+        alert("Ingrese nombre del producto");
         return;
     }
 
-    if (
-        insumosReceta.length === 0 &&
-        intermediosReceta.length === 0 &&
-        packingReceta.length === 0
-    ) {
-        showAlert("Debe agregar al menos un componente (insumo, intermedio o packing).");
-        return;
-    }
+    const receta={
 
-    if (
-        isNaN(subtotal) || subtotal <= 0 ||
-        isNaN(costoTotal) || costoTotal <= 0 ||
-        isNaN(precioVenta) || precioVenta <= 0
-    ) {
-        showAlert("Los valores financieros no son válidos.");
-        return;
-    }
-
-    // Formatear insumos
-    const insumosFormateados = insumosReceta.map(item => {
-        const insumo_id = parseInt(item.insumo_id);
-        const cantidad = parseFloat(item.cantidad);
-        const costo = parseFloat(item.costo);
-
-        if (
-            isNaN(insumo_id) || insumo_id <= 0 ||
-            isNaN(cantidad) || cantidad <= 0 ||
-            isNaN(costo) || costo < 0
-        ) {
-            throw new Error("Insumos inválidos.");
-        }
-
-        return { insumo_id, cantidad, costo };
-    });
-
-    // Formatear intermedios
-    const intermediosFormateados = intermediosReceta.map(item => {
-        const intermedio_id = parseInt(item.intermedio_id);
-        const cantidad = parseFloat(item.cantidad);
-        const costo = parseFloat(item.costo);
-
-        if (
-            isNaN(intermedio_id) || intermedio_id <= 0 ||
-            isNaN(cantidad) || cantidad <= 0 ||
-            isNaN(costo) || costo < 0
-        ) {
-            throw new Error("Intermedios inválidos.");
-        }
-
-        return { intermedio_id, cantidad, costo };
-    });
-
-    // Formatear packing
-    const packingFormateado = packingReceta.map(item => {
-        const packing_id = parseInt(item.packing_id);
-        const cantidad = parseFloat(item.cantidad);
-        const costo = parseFloat(item.costo);
-
-        if (
-            isNaN(packing_id) || packing_id <= 0 ||
-            isNaN(cantidad) || cantidad <= 0 ||
-            isNaN(costo) || costo < 0
-        ) {
-            throw new Error("Packing inválido.");
-        }
-
-        return { packing_id, cantidad, costo };
-    });
-
-    // Objeto final
-    const receta = {
         nombre,
-        cantidad_producida,
-        subtotal,
-        costo_total: costoTotal,
-        precio_venta: precioVenta,
-        insumos: insumosFormateados,
-        intermedios: intermediosFormateados,
-        packing: packingFormateado
+
+        cantidad_producida:parseFloat(document.getElementById("cantidadProducida").value),
+
+        subtotal:parseFloat(document.getElementById("subtotal").textContent),
+
+        costo_total:parseFloat(document.getElementById("costoTotal").textContent),
+
+        precio_venta:parseFloat(document.getElementById("precioVenta").textContent),
+
+        insumos:insumosReceta.map(i=>({
+            insumo_id:i.insumo_id,
+            cantidad:i.cantidad,
+            costo:i.costo
+        })),
+
+        intermedios:intermediosReceta.map(i=>({
+            intermedio_id:i.intermedio_id,
+            cantidad:i.cantidad,
+            costo:i.costo
+        })),
+
+        packing:packingReceta.map(i=>({
+            packing_id:i.packing_id,
+            cantidad:i.cantidad,
+            costo:i.costo
+        }))
+
     };
 
-    // Enviar al backend
-    fetch("/api/recetas", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + token
+    fetch("/api/recetas",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+            Authorization:"Bearer "+token
         },
-        body: JSON.stringify(receta)
+        body:JSON.stringify(receta)
     })
-    .then(async response => {
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.error || "Error al guardar receta");
-        }
+    .then(r=>r.json())
+    .then(()=>{
 
         alert("Receta guardada correctamente");
+
     })
-    .catch(error => {
-        console.error("Error real:", error);
-        alert(error.message);
+    .catch(err=>{
+        console.error(err);
+        alert("Error guardando receta");
     });
+
 }

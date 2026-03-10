@@ -8,8 +8,11 @@ const params = new URLSearchParams(window.location.search);
 const recetaId = params.get("id");
 
 document.addEventListener("DOMContentLoaded", () => {
+
     cargarDetalle();
     configurarBotonPdf();
+    configurarBotonEditar();
+
 });
 
 
@@ -38,15 +41,13 @@ async function cargarDetalle() {
             throw new Error(data.error || "Error obteniendo receta");
         }
 
-        if (!data || !data.receta) {
-            throw new Error("Datos incompletos del backend");
-        }
-
         renderDetalle(data);
 
     } catch (error) {
+
         console.error("Error cargando detalle:", error);
         alert("Error cargando detalle");
+
     }
 }
 
@@ -57,11 +58,11 @@ async function cargarDetalle() {
 
 function renderDetalle(data) {
 
-    const receta = data.receta;
+    const receta = data.receta || {};
     const insumos = Array.isArray(data.insumos) ? data.insumos : [];
 
-    // Calcular resumen si backend no lo envía
     const resumen = data.resumen || {
+
         subtotal: Number(receta.subtotal) || 0,
         igv: (Number(receta.costo_total) || 0) - (Number(receta.subtotal) || 0),
         costo_total: Number(receta.costo_total) || 0,
@@ -70,87 +71,67 @@ function renderDetalle(data) {
         margen: receta.precio_venta > 0
             ? ((receta.precio_venta - receta.costo_total) / receta.precio_venta) * 100
             : 0
+
     };
 
-    // ================= HEADER =================
+    document.getElementById("nombreReceta").innerText = receta.nombre || "-";
 
-    const nombreEl = document.getElementById("nombreReceta");
-    if (nombreEl) nombreEl.innerText = receta.nombre || "-";
-
-    const fechaEl = document.getElementById("fechaReceta");
-    if (fechaEl && receta.fecha_creacion) {
-        fechaEl.innerText =
+    if (receta.fecha_creacion) {
+        document.getElementById("fechaReceta").innerText =
             new Date(receta.fecha_creacion).toLocaleDateString();
     }
 
-    const usuarioEl = document.getElementById("usuarioNombre");
-    if (usuarioEl) {
-        usuarioEl.innerText = receta.usuario_nombre || "-";
-    }
-
-    // ================= TABLA INSUMOS =================
+    document.getElementById("usuarioNombre").innerText =
+        receta.usuario_nombre || "-";
 
     const tabla = document.getElementById("tablaInsumosDetalle");
-    if (tabla) {
+    tabla.innerHTML = "";
 
-        tabla.innerHTML = "";
+    insumos.forEach(i => {
 
-        insumos.forEach(i => {
+        const cantidad = Number(i.cantidad) || 0;
+        const costo = Number(i.costo) || 0;
 
-            const cantidad = Number(i.cantidad) || 0;
-            const costo = Number(i.costo) || 0;
+        const costoUnitario = cantidad > 0 ? costo / cantidad : 0;
 
-            const costoUnitario =
-                cantidad > 0 ? costo / cantidad : 0;
+        const row = document.createElement("tr");
 
-            const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${i.nombre || "-"}</td>
+            <td>${cantidad.toFixed(2)}</td>
+            <td>${i.unidad || "-"}</td>
+            <td>S/ ${costoUnitario.toFixed(2)}</td>
+            <td><strong>S/ ${costo.toFixed(2)}</strong></td>
+        `;
 
-            row.innerHTML = `
-                <td>${i.nombre || "-"}</td>
-                <td>${cantidad.toFixed(2)}</td>
-                <td>${i.unidad || "-"}</td>
-                <td>S/ ${costoUnitario.toFixed(2)}</td>
-                <td><strong>S/ ${costo.toFixed(2)}</strong></td>
-            `;
+        tabla.appendChild(row);
 
-            tabla.appendChild(row);
-        });
-    }
+    });
 
-    // Subtotal tabla (id corregido)
-    const subtotalTablaEl = document.getElementById("subtotalTabla");
-    if (subtotalTablaEl) {
-        subtotalTablaEl.innerText =
-            "S/ " + resumen.subtotal.toFixed(2);
-    }
+    document.getElementById("subtotalTabla").innerText =
+        "S/ " + resumen.subtotal.toFixed(2);
 
-    // ================= RESUMEN FINANCIERO =================
-
-    const igvEl = document.getElementById("igvDetalle");
-    if (igvEl) igvEl.innerText =
+    document.getElementById("igvDetalle").innerText =
         "S/ " + resumen.igv.toFixed(2);
 
-    const totalEl = document.getElementById("costoTotal");
-    if (totalEl) totalEl.innerText =
+    document.getElementById("costoTotal").innerText =
         "S/ " + resumen.costo_total.toFixed(2);
 
-    const precioEl = document.getElementById("precioVenta");
-    if (precioEl) precioEl.innerText =
+    document.getElementById("precioVenta").innerText =
         "S/ " + resumen.precio_venta.toFixed(2);
 
-    const gananciaEl = document.getElementById("gananciaDetalle");
-    if (gananciaEl) gananciaEl.innerText =
+    document.getElementById("gananciaDetalle").innerText =
         "S/ " + resumen.ganancia.toFixed(2);
 
     const margenEl = document.getElementById("margenDetalle");
-    if (margenEl) {
-        margenEl.innerText =
-            resumen.margen.toFixed(2) + " %";
 
-        margenEl.style.color =
-            resumen.margen < 20 ? "red" :
-            resumen.margen < 30 ? "orange" : "green";
-    }
+    margenEl.innerText = resumen.margen.toFixed(2) + " %";
+
+    margenEl.style.color =
+        resumen.margen < 20 ? "red" :
+        resumen.margen < 30 ? "orange" :
+        "green";
+
 }
 
 
@@ -164,9 +145,7 @@ function configurarBotonPdf() {
 
     if (!btnPdf) return;
 
-    btnPdf.addEventListener("click", async (e) => {
-
-        e.preventDefault();
+    btnPdf.addEventListener("click", async () => {
 
         try {
 
@@ -177,8 +156,6 @@ function configurarBotonPdf() {
             });
 
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error("Error backend PDF:", errorText);
                 throw new Error("Error generando PDF");
             }
 
@@ -188,6 +165,7 @@ function configurarBotonPdf() {
             const a = document.createElement("a");
             a.href = url;
             a.download = `receta-${recetaId}.pdf`;
+
             document.body.appendChild(a);
             a.click();
             a.remove();
@@ -195,8 +173,33 @@ function configurarBotonPdf() {
             window.URL.revokeObjectURL(url);
 
         } catch (error) {
+
             console.error("Error descargando PDF:", error);
             alert("Error descargando PDF");
+
         }
+
     });
+
+}
+
+
+// =============================
+// BOTÓN EDITAR
+// =============================
+
+function configurarBotonEditar() {
+
+    const btnEditar = document.getElementById("btnEditar");
+
+    if (!btnEditar) return;
+
+    btnEditar.addEventListener("click", () => {
+
+        if (!recetaId) return;
+
+        window.location.href = `/dashboard.html?id=${recetaId}`;
+
+    });
+
 }

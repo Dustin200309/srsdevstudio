@@ -217,7 +217,36 @@ select:focus{
   background:white;
   box-shadow:0 0 0 3px rgba(139,94,60,0.15);
 }
+.buscador-container{
+position:relative;
+width:100%;
+}
 
+#buscarInsumo{
+width:100%;
+padding:8px;
+font-size:14px;
+}
+
+.resultados-busqueda{
+position:absolute;
+background:white;
+border:1px solid #ccc;
+width:100%;
+max-height:200px;
+overflow-y:auto;
+display:none;
+z-index:100;
+}
+
+.resultado-item{
+padding:8px;
+cursor:pointer;
+}
+
+.resultado-item:hover{
+background:#f0f0f0;
+}
 /* ================= INPUTS ================= */
 
 input{

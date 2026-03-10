@@ -211,9 +211,115 @@ const obtenerRecetaPorId = async (req, res) => {
 };
 
 
+/* =============================== */
+/* ACTUALIZAR */
+/* =============================== */
+const actualizarReceta = async (req, res) => {
+
+    const recetaId = parseInt(req.params.id);
+    const usuario_id = req.user?.id;
+
+    const {
+        nombre,
+        cantidad_producida,
+        subtotal,
+        costo_total,
+        precio_venta,
+        insumos = [],
+        intermedios = [],
+        packing = []
+    } = req.body;
+
+    if (!usuario_id) {
+        return res.status(401).json({ error: "Usuario no autenticado" });
+    }
+
+    const pool = await sql.connect();
+    const transaction = new sql.Transaction(pool);
+
+    try {
+
+        await transaction.begin();
+
+        // actualizar receta
+        await new sql.Request(transaction)
+            .input("id", sql.Int, recetaId)
+            .input("usuario_id", sql.Int, usuario_id)
+            .input("nombre", sql.VarChar(255), nombre.trim())
+            .input("cantidad_producida", sql.Decimal(10,2), Number(cantidad_producida))
+            .input("subtotal", sql.Decimal(10,2), Number(subtotal))
+            .input("costo_total", sql.Decimal(10,2), Number(costo_total))
+            .input("precio_venta", sql.Decimal(10,2), Number(precio_venta))
+            .query(`
+                UPDATE dbo.recetas
+                SET nombre=@nombre,
+                    cantidad_producida=@cantidad_producida,
+                    subtotal=@subtotal,
+                    costo_total=@costo_total,
+                    precio_venta=@precio_venta
+                WHERE id=@id AND usuario_id=@usuario_id
+            `);
+
+        // limpiar ingredientes actuales
+        await new sql.Request(transaction)
+            .input("receta_id", sql.Int, recetaId)
+            .query(`DELETE FROM dbo.RecetaInsumos WHERE receta_id=@receta_id`);
+
+        await new sql.Request(transaction)
+            .input("receta_id", sql.Int, recetaId)
+            .query(`DELETE FROM dbo.receta_intermedios WHERE receta_id=@receta_id`);
+
+        await new sql.Request(transaction)
+            .input("receta_id", sql.Int, recetaId)
+            .query(`DELETE FROM dbo.receta_packing WHERE receta_id=@receta_id`);
+
+        // insertar insumos
+        for (const insumo of insumos) {
+
+            await new sql.Request(transaction)
+                .input("receta_id", sql.Int, recetaId)
+                .input("insumo_id", sql.Int, Number(insumo.insumo_id))
+                .input("cantidad", sql.Decimal(10,2), Number(insumo.cantidad))
+                .input("costo", sql.Decimal(10,2), Number(insumo.costo))
+                .query(`
+                    INSERT INTO dbo.RecetaInsumos
+                    (receta_id, insumo_id, cantidad, costo)
+                    VALUES (@receta_id,@insumo_id,@cantidad,@costo)
+                `);
+        }
+
+        // insertar intermedios
+        for (const item of intermedios) {
+
+            await new sql.Request(transaction)
+                .input("receta_id", sql.Int, recetaId)
+                .input("intermedio_id", sql.Int, Number(item.intermedio_id))
+                .input("cantidad", sql.Decimal(10,2), Number(item.cantidad))
+                .input("costo", sql.Decimal(10,2), Number(item.costo))
+                .query(`
+                    INSERT INTO dbo.receta_intermedios
+                    (receta_id,intermedio_id,cantidad,costo)
+                    VALUES (@receta_id,@intermedio_id,@cantidad,@costo)
+                `);
+        }
+
+        await transaction.commit();
+
+        res.json({ message: "Receta actualizada" });
+
+    } catch (error) {
+
+        await transaction.rollback();
+        console.error(error);
+        res.status(500).json({ error: "Error actualizando receta" });
+
+    }
+
+};
 module.exports = {
     listarRecetas,
     crearReceta,
     eliminarReceta,
-    obtenerRecetaPorId
+    obtenerRecetaPorId,
+    actualizarReceta
 };

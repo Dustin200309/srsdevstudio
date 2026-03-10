@@ -1,130 +1,131 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Detalle financiero y técnico de la receta">
-    <title>Detalle de Receta</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Detalle financiero y técnico de la receta">
+<title>Detalle de Receta</title>
 
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/recetas.css">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/recetas.css">
 </head>
 
 <body>
 
 <header class="header">
-    <button class="menu-btn" id="btnMenu" aria-label="Abrir menú">☰</button>
-    <h1>Detalle de Receta</h1>
+<button class="menu-btn" id="btnMenu" aria-label="Abrir menú">☰</button>
+<h1>Detalle de Receta</h1>
 </header>
 
 <nav class="sidebar" id="sidebar">
-    <ul>
-        <li><a href="home.html">Home</a></li>
-        <li><a href="insumos.html">Insumos</a></li>
-        <li><a href="packing.html">Empaques</a></li>
-        <li><a href="intermedios.html">Productos Intermedios</a></li>
-        <li><a href="recetas.html">Productos Terminados</a></li>
-        <li><a href="intermedio_costeo.html">Costear Producto Intermedio</a></li>
-        <li><a href="dashboard.html">Costear Producto Terminado</a></li>
-        <li><a href="rentabilidad.html">Rentabilidad</a></li>
-        <li><a href="clientes.html">Clientes</a></li>
-        <li><a href="gastos.html">Gastos</a></li>
-        <li><a href="#" id="logoutBtn">Cerrar Sesión</a></li>
-    </ul>
+<ul>
+<li><a href="home.html">Home</a></li>
+<li><a href="insumos.html">Insumos</a></li>
+<li><a href="packing.html">Empaques</a></li>
+<li><a href="intermedios.html">Productos Intermedios</a></li>
+<li><a href="recetas.html">Productos Terminados</a></li>
+<li><a href="intermedio_costeo.html">Costear Producto Intermedio</a></li>
+<li><a href="dashboard.html">Costear Producto Terminado</a></li>
+<li><a href="rentabilidad.html">Rentabilidad</a></li>
+<li><a href="clientes.html">Clientes</a></li>
+<li><a href="gastos.html">Gastos</a></li>
+<li><a href="#" id="logoutBtn">Cerrar Sesión</a></li>
+</ul>
 </nav>
 
 <div class="overlay" id="overlay"></div>
 
-<!-- ================= MAIN ================= -->
 <main class="content">
 
-    <!-- CABECERA -->
-    <section class="card receta-header">
-        <h2 id="nombreReceta">Nombre del Producto</h2>
-        <p class="fecha">
-            Fecha: <span id="fechaReceta"></span>
-        </p>
-    </section>
+<section class="card receta-header">
+<h2 id="nombreReceta">Nombre del Producto</h2>
+<p class="fecha">
+Fecha: <span id="fechaReceta"></span>
+</p>
+</section>
 
-    <!-- TABLA INSUMOS -->
-    <section class="card">
-        <h3>🧾 Insumos Utilizados</h3>
+<section class="card">
+<h3>🧾 Insumos Utilizados</h3>
 
-        <div class="table-container">
-            <table class="tabla-detalle">
-                <thead>
-                    <tr>
-                        <th>Insumo</th>
-                        <th>Cantidad</th>
-                        <th>Unidad</th>
-                        <th>Costo Unitario</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
+<div class="table-container">
+<table class="tabla-detalle">
 
-                <tbody id="tablaInsumosDetalle">
-                    <!-- JS inserta filas aquí -->
-                </tbody>
+<thead>
+<tr>
+<th>Insumo</th>
+<th>Cantidad</th>
+<th>Unidad</th>
+<th>Costo Unitario</th>
+<th>Total</th>
+</tr>
+</thead>
 
-                <tfoot>
-                    <tr>
-                        <td colspan="4"><strong>Subtotal</strong></td>
-                        <td id="subtotalTabla">S/ 0.00</td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-    </section>
+<tbody id="tablaInsumosDetalle"></tbody>
 
-    <!-- RESUMEN FINANCIERO -->
-    <section class="card resumen-card">
-        <h3>💰 Resumen Financiero</h3>
+<tfoot>
+<tr>
+<td colspan="4"><strong>Subtotal</strong></td>
+<td id="subtotalTabla">S/ 0.00</td>
+</tr>
+</tfoot>
 
-        <div class="resumen-grid">
+</table>
+</div>
+</section>
 
-            <div class="resumen-item">
-                <span>IGV (18%)</span>
-                <strong id="igvDetalle">S/ 0.00</strong>
-            </div>
+<section class="card resumen-card">
+<h3>💰 Resumen Financiero</h3>
 
-            <div class="resumen-item total">
-                <span>Costo Total</span>
-                <strong id="costoTotal">S/ 0.00</strong>
-            </div>
+<div class="resumen-grid">
 
-            <div class="resumen-item venta">
-                <span>Precio de Venta</span>
-                <strong id="precioVenta">S/ 0.00</strong>
-            </div>
+<div class="resumen-item">
+<span>IGV (18%)</span>
+<strong id="igvDetalle">S/ 0.00</strong>
+</div>
 
-            <div class="resumen-item ganancia">
-                <span>Ganancia</span>
-                <strong id="gananciaDetalle">S/ 0.00</strong>
-            </div>
+<div class="resumen-item total">
+<span>Costo Total</span>
+<strong id="costoTotal">S/ 0.00</strong>
+</div>
 
-            <div class="resumen-item margen">
-                <span>Margen (%)</span>
-                <strong id="margenDetalle">0 %</strong>
-            </div>
+<div class="resumen-item venta">
+<span>Precio de Venta</span>
+<strong id="precioVenta">S/ 0.00</strong>
+</div>
 
-        </div>
+<div class="resumen-item ganancia">
+<span>Ganancia</span>
+<strong id="gananciaDetalle">S/ 0.00</strong>
+</div>
 
-        <p class="costeado">
-            Costeado por:
-            <strong id="usuarioNombre">-</strong>
-        </p>
-    </section>
+<div class="resumen-item margen">
+<span>Margen (%)</span>
+<strong id="margenDetalle">0 %</strong>
+</div>
 
-    <!-- ACCIONES -->
-    <section class="card center">
-        <button type="button" id="btnPdf" class="btn-primary">
-            📄 Descargar PDF
-        </button>
-    </section>
+</div>
+
+<p class="costeado">
+Costeado por:
+<strong id="usuarioNombre">-</strong>
+</p>
+
+</section>
+
+<section class="card center">
+
+<button id="btnEditar" class="btn-secondary">
+✏️ Editar Receta
+</button>
+
+<button id="btnPdf" class="btn-primary">
+📄 Descargar PDF
+</button>
+
+</section>
 
 </main>
 
-<!-- Scripts -->
 <script defer src="js/menu.js"></script>
 <script defer src="js/receta-detalle.js"></script>
 
