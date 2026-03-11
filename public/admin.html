@@ -4,12 +4,17 @@
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <meta name="description" content="Panel administrativo de SRS Studio">
 <meta name="robots" content="noindex, nofollow">
 
+<meta name="theme-color" content="#111827">
+
 <title>Panel Administrativo | SRS Studio</title>
+
+<link rel="icon" href="/favicon.ico">
 
 <link rel="stylesheet" href="css/admin.css">
 
@@ -22,25 +27,41 @@
 <div class="dashboard">
 
 <!-- OVERLAY MOVIL -->
-<div class="overlay" id="overlay"></div>
+
+<div class="overlay" id="overlay" aria-hidden="true"></div>
 
 <!-- SIDEBAR -->
 
 <aside class="sidebar" id="sidebar">
 
 <div class="logo">
-<img src="/images/negro.png" alt="Logo SRS Studio">
+
+<img 
+src="/images/negro.png"
+alt="Logo SRS Studio"
+loading="lazy"
+>
+
 <h2>SRS Studio</h2>
+
 </div>
 
-<!-- En el menú hamburguesa (dentro del sidebar) -->
-<nav class="menu">
-    <a href="#" class="active">Dashboard</a>
-    <a href="#usuarios">Usuarios</a>
-    <a href="#notificaciones">Notificaciones</a>
-    <a href="#">Chat usuarios</a>
-    <a href="#">Configuración</a>
-    <button id="logout-btn" class="logout">Cerrar sesión</button> <!-- Mover aquí -->
+<nav class="menu" aria-label="Menú administrativo">
+
+<a href="#" class="active">Dashboard</a>
+
+<a href="#usuarios">Usuarios</a>
+
+<a href="#notificaciones">Notificaciones</a>
+
+<a href="#chat">Chat usuarios</a>
+
+<a href="#">Configuración</a>
+
+<button id="logout-btn" class="logout">
+Cerrar sesión
+</button>
+
 </nav>
 
 </aside>
@@ -53,13 +74,24 @@
 
 <div class="topbar-left">
 
-<button class="menu-toggle" id="menu-toggle">
+<button 
+class="menu-toggle"
+id="menu-toggle"
+aria-label="Abrir menú"
+>
 ☰
 </button>
 
 <div>
-<h1 id="bienvenida">Panel Administrativo</h1>
-<p class="subtitle">Gestión del sistema</p>
+
+<h1 id="bienvenida">
+Panel Administrativo
+</h1>
+
+<p class="subtitle">
+Gestión del sistema
+</p>
+
 </div>
 
 </div>
@@ -71,18 +103,25 @@
 <section class="stats">
 
 <div class="card">
+
 <h3>Usuarios activos</h3>
+
 <h2 id="usuarios-activos">0</h2>
+
 </div>
 
 <div class="card">
+
 <h3>Notificaciones enviadas</h3>
+
 <h2 id="notificaciones-count">0</h2>
+
 </div>
 
 </section>
 
 <!-- NOTIFICACIONES -->
+
 <section class="panel" id="notificaciones">
 
 <h2>Enviar notificación</h2>
@@ -91,8 +130,13 @@
 id="mensaje-notificacion"
 placeholder="Escribe el mensaje..."
 rows="4"
+maxlength="500"
 ></textarea>
-<small>Opcional: puedes agregar una imagen para el aviso</small>
+
+<small>
+Opcional: puedes agregar una imagen para el aviso
+</small>
+
 <input
 type="file"
 id="imagen-notificacion"
@@ -113,15 +157,37 @@ Enviar notificación
 
 <div class="form-grid">
 
-<input type="text" id="nuevo-nombre" placeholder="Nombre">
+<input
+type="text"
+id="nuevo-nombre"
+placeholder="Nombre"
+required
+>
 
-<input type="email" id="nuevo-email" placeholder="Email">
+<input
+type="email"
+id="nuevo-email"
+placeholder="Email"
+required
+>
 
-<input type="password" id="nuevo-password" placeholder="Contraseña">
+<input
+type="password"
+id="nuevo-password"
+placeholder="Contraseña"
+required
+>
 
 <select id="nuevo-rol">
-<option value="cliente">Cliente</option>
-<option value="admin">Administrador</option>
+
+<option value="cliente">
+Cliente
+</option>
+
+<option value="admin">
+Administrador
+</option>
+
 </select>
 
 </div>
@@ -145,12 +211,14 @@ Crear usuario
 <thead>
 
 <tr>
+
 <th>ID</th>
 <th>Nombre</th>
 <th>Email</th>
 <th>Rol</th>
 <th>Estado</th>
 <th>Acciones</th>
+
 </tr>
 
 </thead>
@@ -167,7 +235,9 @@ Crear usuario
 
 <section class="panel chat-panel" id="chat">
 
-<h2 id="chat-titulo">Chat con usuarios</h2>
+<h2 id="chat-titulo">
+Chat con usuarios
+</h2>
 
 <div class="chat-admin">
 
@@ -177,9 +247,7 @@ Crear usuario
 
 <h3>Usuarios</h3>
 
-<ul id="lista-usuarios">
-<!-- usuarios cargados desde backend -->
-</ul>
+<ul id="lista-usuarios"></ul>
 
 </div>
 
@@ -187,17 +255,25 @@ Crear usuario
 
 <div class="chat-box">
 
-<div class="chat-messages" id="chat-mensajes"></div>
+<div
+class="chat-messages"
+id="chat-mensajes"
+aria-live="polite"
+></div>
 
 <div class="chat-input">
 
-<input 
+<input
 type="text"
 id="chat-mensaje"
 placeholder="Responder al usuario..."
+maxlength="500"
 >
 
-<button id="btn-enviar-chat">
+<button
+id="btn-enviar-chat"
+aria-label="Enviar mensaje"
+>
 Enviar
 </button>
 
@@ -213,7 +289,7 @@ Enviar
 
 </div>
 
-<script src="js/admin.js"></script>
+<script src="js/admin.js" defer></script>
 
 </body>
 </html>

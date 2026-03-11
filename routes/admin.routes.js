@@ -45,12 +45,14 @@ router.put("/usuarios/:id/toggle", authenticateToken, soloAdmin, async (req, res
 
     try {
 
-        const { id } = req.params;
+        const id = parseInt(req.params.id);
 
-        await sql.query(`
+        await sql.request()
+        .input("id", sql.Int, id)
+        .query(`
             UPDATE dbo.usuarios
             SET activo = CASE WHEN activo = 1 THEN 0 ELSE 1 END
-            WHERE id = ${id}
+            WHERE id = @id
         `);
 
         res.json({ message: "Estado del usuario actualizado" });
@@ -71,7 +73,7 @@ router.put("/usuarios/:id/password", authenticateToken, soloAdmin, async (req, r
 
     try {
 
-        const { id } = req.params;
+        const id = parseInt(req.params.id);
         const { newPassword } = req.body;
 
         if (!newPassword) {
@@ -80,10 +82,13 @@ router.put("/usuarios/:id/password", authenticateToken, soloAdmin, async (req, r
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-        await sql.query(`
+        await sql.request()
+        .input("id", sql.Int, id)
+        .input("password", sql.NVarChar, hashedPassword)
+        .query(`
             UPDATE dbo.usuarios
-            SET password = '${hashedPassword}'
-            WHERE id = ${id}
+            SET password = @password
+            WHERE id = @id
         `);
 
         res.json({ message: "Contraseña actualizada correctamente" });
@@ -122,25 +127,55 @@ router.delete(
     soloAdmin,
     noticiasController.eliminarNoticia
 );
+
+
 /* ==============================
    CHAT CLIENTE
 ============================== */
 
 // Obtener mensajes del usuario logeado
-router.get("/chat/usuario", authenticateToken, chatController.obtenerMensajesUsuario);
+router.get(
+    "/chat/usuario",
+    authenticateToken,
+    chatController.obtenerMensajesUsuario
+);
 
 // Enviar mensaje del usuario
-router.post("/chat/usuario", authenticateToken, chatController.enviarMensajeUsuario);
+router.post(
+    "/chat/usuario",
+    authenticateToken,
+    chatController.enviarMensajeUsuario
+);
+
 
 /* ==============================
    CHAT ADMIN
 ============================== */
 
-// Admin ve todos los mensajes
-router.get("/chat/admin", authenticateToken, soloAdmin, chatController.obtenerMensajesAdmin);
+// Lista usuarios con chat
+router.get(
+    "/chat/admin/usuarios",
+    authenticateToken,
+    soloAdmin,
+    chatController.obtenerUsuariosChat
+);
 
-// Admin responde a un usuario
-router.post("/chat/admin", authenticateToken, soloAdmin, chatController.responderAdmin);
+// Ver conversación con usuario
+router.get(
+    "/chat/admin/:usuario_id",
+    authenticateToken,
+    soloAdmin,
+    chatController.obtenerMensajesAdmin
+);
+
+// Admin responde
+router.post(
+    "/chat/admin/responder",
+    authenticateToken,
+    soloAdmin,
+    chatController.responderAdmin
+);
+
 
 /* ==============================
    NOTIFICACIONES
@@ -159,15 +194,21 @@ router.get(
     notificacionesController.obtenerNotificaciones
 );
 
-router.delete("/notificaciones/:id", authenticateToken, soloAdmin, async (req, res) => {
+router.delete(
+"/notificaciones/:id",
+authenticateToken,
+soloAdmin,
+async (req, res) => {
 
     try {
 
-        const { id } = req.params;
+        const id = parseInt(req.params.id);
 
-        await sql.query(`
+        await sql.request()
+        .input("id", sql.Int, id)
+        .query(`
             DELETE FROM dbo.Notificaciones
-            WHERE id = ${id}
+            WHERE id = @id
         `);
 
         res.json({ message: "Notificación eliminada correctamente" });

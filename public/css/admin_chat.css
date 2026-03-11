@@ -1,138 +1,274 @@
-body {
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f4f4f4;
+/* =========================
+RESET
+========================= */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
 }
 
-/* Contenedor principal */
-.chat-container {
-    display: flex;
-    height: 100vh;
-    background-color: #f9f9f9;
+:root{
+--color-bg:#f7f8fa;
+--color-panel:#ffffff;
+--color-border:#e6e6e6;
+--color-primary:#3b82f6;
+--color-primary-hover:#2563eb;
+--color-user:#f1f5ff;
+--color-admin:#dcfce7;
+--text:#333;
+--shadow:0 2px 10px rgba(0,0,0,0.05);
 }
 
-/* Panel de usuarios */
-.usuarios-panel {
-    width: 300px;
-    background: #fff;
-    border-right: 1px solid #ddd;
-    overflow-y: auto;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+body{
+font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+background:var(--color-bg);
+height:100vh;
 }
 
-/* Título del panel de usuarios */
-.usuarios-panel h2 {
-    padding: 20px;
-    margin: 0;
-    border-bottom: 1px solid #eee;
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
+/* =========================
+CONTENEDOR
+========================= */
+
+.chat-container{
+display:flex;
+height:100vh;
+overflow:hidden;
 }
 
-/* Usuario individual */
-.usuario {
-    padding: 15px 20px;
-    cursor: pointer;
-    border-bottom: 1px solid #eee;
-    transition: background-color 0.3s ease;
+/* =========================
+PANEL USUARIOS
+========================= */
+
+.usuarios-panel{
+width:300px;
+background:var(--color-panel);
+border-right:1px solid var(--color-border);
+display:flex;
+flex-direction:column;
+overflow-y:auto;
+box-shadow:var(--shadow);
 }
 
-/* Efecto hover */
-.usuario:hover {
-    background: #f0f0f0;
+.usuarios-panel h2{
+padding:20px;
+font-size:18px;
+border-bottom:1px solid var(--color-border);
 }
 
-/* Usuario activo */
-.usuario.activo {
-    background: #e6f7ff;
-    font-weight: bold;
+/* =========================
+USUARIO
+========================= */
+
+.usuario{
+padding:14px 20px;
+cursor:pointer;
+border-bottom:1px solid var(--color-border);
+transition:.2s;
+display:flex;
+align-items:center;
 }
 
-/* Panel de chat */
-.chat-panel {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+.usuario:hover{
+background:#f4f6ff;
 }
 
-/* Cabecera del chat */
-.chat-header {
-    padding: 20px;
-    background: #fff;
-    border-bottom: 1px solid #ddd;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+.usuario.activo{
+background:#eaf1ff;
+border-left:4px solid var(--color-primary);
+font-weight:600;
 }
 
-/* Contenedor de mensajes */
-.chat-mensajes {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+/* =========================
+CHAT PANEL
+========================= */
+
+.chat-panel{
+flex:1;
+display:flex;
+flex-direction:column;
+background:#fafafa;
 }
 
-/* Estilo de los mensajes */
-.mensaje {
-    max-width: 60%;
-    padding: 10px 15px;
-    border-radius: 10px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
-    font-size: 14px;
-    color: #333;
-    word-wrap: break-word;
+/* =========================
+HEADER
+========================= */
+
+.chat-header{
+padding:16px 20px;
+background:#fff;
+border-bottom:1px solid var(--color-border);
+font-weight:600;
+box-shadow:var(--shadow);
 }
 
-/* Mensajes del usuario */
-.mensaje.usuario {
-    background: #e6f7ff;
-    align-self: flex-start;
-    border: 1px solid #a7c6f7;
+/* =========================
+MENSAJES
+========================= */
+
+.chat-mensajes{
+flex:1;
+padding:20px;
+overflow-y:auto;
+display:flex;
+flex-direction:column;
+gap:12px;
+scroll-behavior:smooth;
 }
 
-/* Mensajes del admin */
-.mensaje.admin {
-    background: #d1ffd6;
-    align-self: flex-end;
-    border: 1px solid #a7f7a7;
+/* Scroll */
+
+.chat-mensajes::-webkit-scrollbar{
+width:6px;
 }
 
-/* Formulario de chat */
-.chat-form {
-    display: flex;
-    padding: 15px;
-    background: #fff;
-    border-top: 1px solid #ddd;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+.chat-mensajes::-webkit-scrollbar-thumb{
+background:#cfcfcf;
+border-radius:10px;
 }
 
-/* Input de mensaje */
-.chat-form input {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-    color: #333;
-    box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.1);
+/* =========================
+MENSAJE
+========================= */
+
+.mensaje{
+max-width:min(60%,520px);
+padding:12px 16px;
+border-radius:14px;
+font-size:14px;
+color:var(--text);
+word-wrap:break-word;
+box-shadow:0 1px 4px rgba(0,0,0,0.08);
+animation:fadeIn .18s ease;
 }
 
-/* Botón de enviar */
-.chat-form button {
-    margin-left: 10px;
-    padding: 10px 20px;
-    border: none;
-    background: #007bff;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.mensaje strong{
+display:block;
+font-size:12px;
+opacity:.7;
+margin-bottom:4px;
 }
 
-/* Efecto hover en el botón */
-.chat-form button:hover {
-    background: #0056b3;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+.mensaje span{
+font-size:11px;
+display:block;
+margin-top:6px;
+opacity:.6;
+text-align:right;
+}
+
+/* usuario */
+
+.mensaje.usuario{
+background:var(--color-user);
+border:1px solid #d7e3ff;
+align-self:flex-start;
+}
+
+/* admin */
+
+.mensaje.admin{
+background:var(--color-admin);
+border:1px solid #b7f5c2;
+align-self:flex-end;
+}
+
+/* =========================
+INPUT
+========================= */
+
+.chat-form{
+display:flex;
+padding:14px;
+background:#fff;
+border-top:1px solid var(--color-border);
+gap:10px;
+}
+
+.chat-form input{
+flex:1;
+padding:12px 14px;
+border:1px solid #ccc;
+border-radius:8px;
+font-size:14px;
+outline:none;
+transition:.2s;
+}
+
+.chat-form input:focus{
+border-color:var(--color-primary);
+box-shadow:0 0 0 2px rgba(59,130,246,.15);
+}
+
+.chat-form button{
+padding:12px 20px;
+border:none;
+background:var(--color-primary);
+color:#fff;
+border-radius:8px;
+cursor:pointer;
+font-weight:500;
+transition:.2s;
+}
+
+.chat-form button:hover{
+background:var(--color-primary-hover);
+box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+
+/* =========================
+ANIMACION
+========================= */
+
+@keyframes fadeIn{
+
+from{
+opacity:0;
+transform:translateY(6px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+
+/* =========================
+RESPONSIVE
+========================= */
+
+@media(max-width:900px){
+
+.usuarios-panel{
+width:240px;
+}
+
+.mensaje{
+max-width:75%;
+}
+
+}
+
+@media(max-width:600px){
+
+.chat-container{
+flex-direction:column;
+}
+
+.usuarios-panel{
+width:100%;
+height:180px;
+border-right:none;
+border-bottom:1px solid var(--color-border);
+}
+
+.chat-panel{
+flex:1;
+}
+
+.mensaje{
+max-width:85%;
+}
+
 }

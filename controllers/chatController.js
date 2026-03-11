@@ -70,21 +70,32 @@ async function obtenerMensajesUsuario(req, res) {
 ========================= */
 async function obtenerMensajesAdmin(req, res) {
     try {
+
+        const usuario_id = parseInt(req.params.usuario_id);
+
+        if (!usuario_id || isNaN(usuario_id)) {
+            return res.status(400).json({ error: "Usuario inválido" });
+        }
+
         const pool = await poolPromise;
 
-        const result = await pool.request().query(`
-            SELECT 
-                m.id,
-                m.mensaje,
-                m.remitente,
-                m.fecha,
-                u.nombre AS usuario
-            FROM ChatMensajes m
-            INNER JOIN Usuarios u ON u.id = m.usuario_id
-            ORDER BY m.fecha ASC
-        `);
+        const result = await pool.request()
+            .input("usuario_id", sql.Int, usuario_id)
+            .query(`
+                SELECT 
+                    m.id,
+                    m.mensaje,
+                    m.remitente,
+                    m.fecha,
+                    u.nombre AS usuario
+                FROM ChatMensajes m
+                INNER JOIN Usuarios u ON u.id = m.usuario_id
+                WHERE m.usuario_id = @usuario_id
+                ORDER BY m.fecha ASC
+            `);
 
         res.json(result.recordset);
+
     } catch (err) {
         console.error("Error obteniendo mensajes admin:", err);
         res.status(500).json({ error: "Error obteniendo mensajes admin" });
@@ -113,7 +124,10 @@ async function enviarMensajeUsuario(req, res) {
                 VALUES (@usuario_id, @mensaje, 'usuario', GETDATE())
             `);
 
-        res.json({ message: "Mensaje enviado" });
+        res.json({
+             ok: true,
+             message: "Mensaje enviado"
+        });
     } catch (err) {
         console.error("Error enviando mensaje:", err);
         res.status(500).json({ error: "Error enviando mensaje" });

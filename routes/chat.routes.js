@@ -127,12 +127,14 @@ router.get("/admin/usuarios", authenticateToken, async (req, res) => {
         const pool = await getPool();
 
         const result = await pool.request().query(`
-            SELECT DISTINCT
-                u.id,
-                u.nombre
+            SELECT 
+            u.id,
+            u.nombre,
+            MAX(c.fecha) AS ultimo_mensaje
             FROM Chat c
             INNER JOIN usuarios u ON u.id = c.usuario_id
-            ORDER BY u.nombre ASC
+            GROUP BY u.id, u.nombre
+            ORDER BY ultimo_mensaje DESC
         `);
 
         res.json(result.recordset);
@@ -251,7 +253,38 @@ router.post("/admin/responder", authenticateToken, async (req, res) => {
 
 });
 
+router.put("/admin/leido/:usuario_id", authenticateToken, async (req, res) => {
 
+    try {
+
+        if (req.user.rol !== "admin") {
+            return res.status(403).json({ error: "Solo admin" });
+        }
+
+        const usuarioId = parseInt(req.params.usuario_id);
+
+        const pool = await getPool();
+
+        await pool.request()
+            .input("usuario_id", sql.Int, usuarioId)
+            .query(`
+                UPDATE Chat
+                SET leido = 1
+                WHERE usuario_id = @usuario_id
+                AND remitente = 'usuario'
+            `);
+
+        res.json({ ok:true });
+
+    } catch(err){
+
+        console.error(err);
+
+        res.status(500).json({ error:"Error actualizando estado" });
+
+    }
+
+});
 /* =========================
    EXPORTAR ROUTER
 ========================= */

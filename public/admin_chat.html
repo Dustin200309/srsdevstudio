@@ -1,45 +1,109 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat Admin</title>
+
+<title>Chat Admin | Panel Administrativo</title>
+
+<meta name="description" content="Panel administrativo de chat para comunicación con usuarios del sistema">
+
+<meta name="theme-color" content="#5c3a2e">
+
+<link rel="icon" href="/favicon.ico">
 
 <link rel="stylesheet" href="css/admin_chat.css">
+
 </head>
 
 <body>
 
-<div class="chat-container">
+<main class="chat-container">
 
-    <!-- LISTA USUARIOS -->
-    <div class="usuarios-panel">
+    <!-- =========================
+         LISTA DE USUARIOS
+    ========================== -->
 
-        <h2>Usuarios</h2>
+    <aside 
+        class="usuarios-panel"
+        aria-label="Lista de usuarios"
+    >
 
-        <div id="usuariosList"></div>
+        <header class="usuarios-header">
+            <h2>Usuarios</h2>
+        </header>
 
-    </div>
+        <div
+            id="usuariosList"
+            class="usuarios-list"
+            role="list"
+        ></div>
 
-    <!-- CHAT -->
-    <div class="chat-panel">
+    </aside>
 
-        <div class="chat-header">
-            <h3 id="usuarioActivo">Selecciona un usuario</h3>
-        </div>
+    <!-- =========================
+         PANEL DE CHAT
+    ========================== -->
 
-        <div class="chat-mensajes" id="chatMensajes"></div>
+    <section 
+        class="chat-panel"
+        aria-label="Panel de conversación"
+    >
 
-        <form id="formMensaje" class="chat-form">
-            <input type="text" id="mensajeInput" placeholder="Escribe mensaje..." required>
-            <button type="submit">Enviar</button>
+        <!-- HEADER CHAT -->
+
+        <header class="chat-header">
+
+            <h3 id="usuarioActivo">
+                Selecciona un usuario
+            </h3>
+
+        </header>
+
+        <!-- MENSAJES -->
+
+        <div
+            class="chat-mensajes"
+            id="chatMensajes"
+            role="log"
+            aria-live="polite"
+            aria-relevant="additions"
+        ></div>
+
+        <!-- INPUT CHAT -->
+
+        <form
+            id="formMensaje"
+            class="chat-form"
+            autocomplete="off"
+        >
+
+            <input
+                type="text"
+                id="mensajeInput"
+                placeholder="Escribe un mensaje..."
+                aria-label="Escribir mensaje"
+                maxlength="500"
+                required
+            >
+
+            <button
+                type="submit"
+                aria-label="Enviar mensaje"
+            >
+                Enviar
+            </button>
+
         </form>
 
-    </div>
+    </section>
 
-</div>
+</main>
 
-<script src="js/admin_chat.js"></script>
+<script src="js/admin_chat.js" defer></script>
 
 </body>
 </html>
