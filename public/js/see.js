@@ -187,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             chatMessages.lastChild.remove();
 
-            agregarMensaje("Mini Sam tuvo un problema pensando 🤖", "bot-message");
+            agregarMensaje("No tengo respuesta a esto por el momento :) ", "bot-message");
 
         }
 
