@@ -130,7 +130,7 @@ exports.obtenerRentabilidad = async (req, res) => {
     const gananciaNeta = ventasTotales - gastosTotales;
 
     // ======================
-    // RESPUESTA
+    // RESPUESTAz
     // ======================
 
     res.json({

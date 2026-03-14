@@ -48,7 +48,7 @@ app.use('/api/rentabilidad', require('./routes/rentabilidad.routes'));
 app.use('/api/gastos', require('./routes/gastos.routes'));
 app.use('/api/chat', require('./routes/chat.routes'));
 app.use('/api/noticias', require('./routes/noticias.routes'));
-
+app.use('/api/assistant', require('./routes/assistant.routes'));
 
 // 404
 app.use((req, res) => {
